@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parthiv Binish - Neon Cyber Scroll Portfolio</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Font: Rajdhani -->
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(180deg, #1a0033, #000033);
+            color: #fff;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Neon Background Particles */
+        #particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: #ff00ff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #ff00ff;
+            opacity: 0.7;
+        }
+
+        /* Content Panels */
+        .content-panel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            padding: 20px;
+            opacity: 0;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 51, 0.6);
+            backdrop-filter: blur(10px);
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .content-panel.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        h1.neon-title {
+            font-size: 4rem;
+            color: #ff00ff;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            text-shadow: 0 0 20px #ff00ff;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            font-size: 2rem;
+            color: #ff00ff;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px #ff00ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        h2 i {
+            font-size: 1.5rem;
+            text-shadow: 0 0 10px #ff00ff;
+        }
+
+        p, ul {
+            max-width: 800px;
+            font-size: 1.2rem;
+            color: #e6e6ff;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        ul li {
+            margin: 10px 0;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        ul li::before {
+            content: '>>';
+            color: #ff00ff;
+            position: absolute;
+            left: 0;
+            text-shadow: 0 0 5px #ff00ff;
+        }
+
+        .project-card {
+            background: rgba(255, 0, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .project-card:hover {
+            transform: scale(1.05);
+        }
+
+        a {
+            color: #ff00ff;
+            text-decoration: none;
+            text-shadow: 0 0 5px #ff00ff;
+        }
+
+        a:hover {
+            color: #ff66ff;
+        }
+
+        /* Skills Section Specific */
+        .skills-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            max-width: 800px;
+        }
+
+        .skill-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100px;
+            transition: transform 0.3s ease;
+        }
+
+        .skill-item:hover {
+            transform: scale(1.1);
+        }
+
+        .skill-item i {
+            font-size: 2.5rem;
+            color: #ff00ff;
+            text-shadow: 0 0 15px #ff00ff;
+            margin-bottom: 5px;
+        }
+
+        .skill-item span {
+            font-size: 1rem;
+            color: #e6e6ff;
+            text-align: center;
+        }
+
+        /* Animation Classes */
+        .animate-text {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @media (max-width: 768px) {
+            h1.neon-title {
+                font-size: 3rem;
+            }
+            h2 {
+                font-size: 1.5rem;
+            }
+            h2 i {
+                font-size: 1.2rem;
+            }
+            p, ul {
+                font-size: 1rem;
+            }
+            .skill-item {
+                width: 80px;
+            }
+            .skill-item i {
+                font-size: 2rem;
+            }
+            .skill-item span {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1.neon-title {
+                font-size: 2rem;
+            }
+            h2 {
+                font-size: 1.2rem;
+            }
+            h2 i {
+                font-size: 1rem;
+            }
+            p, ul {
+                font-size: 0.9rem;
+            }
+            .skill-item {
+                width: 70px;
+            }
+            .skill-item i {
+                font-size: 1.5rem;
+            }
+            .skill-item span {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="particles"></div>
+
+    <!-- About Section -->
+    <div id="about" class="content-panel active">
+        <h1 class="neon-title animate-text">Parthiv Binish</h1>
+        <p class="mt-3 animate-text">Web Developer | UI/UX Enthusiast | Cyber Security Analyst</p>
+        <div class="container mt-4">
+            <h2 class="animate-text"><i class="fas fa-user"></i> About Me</h2>
+            <p class="animate-text">As a passionate and motivated BCA student at St. Joseph's Academy of Higher Education & Research, I thrive in the world of technology and programming. My journey has equipped me with strong skills in languages like C, C++, Linux, JavaScript, PHP, MySQL, Java, React, FastAPI, and web technologies like HTML and CSS. I am also certified in Cyber Security Analytics (CCSA), which has deepened my understanding of creating secure, efficient, and innovative web applications.</p>
+        </div>
+    </div>
+
+    <!-- Education Section -->
+    <div id="education" class="content-panel">
+        <div class="container">
+            <h2 class="animate-text"><i class="fas fa-graduation-cap"></i> Education</h2>
+            <ul class="animate-text">
+                <li><strong>Bachelor of Computer Applications (BCA)</strong><br>MG University, Kottayam (2022 - 2025, Expected) - 71.21%</li>
+                <li><strong>Higher Secondary Education</strong><br>St. Augustine's Higher Secondary School (2020 - 2022) - 71%</li>
+                <li><strong>High School</strong><br>St. Thomas High School, Thudanganad (2019 - 2020) - 96%</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Projects Section -->
+    <div id="projects" class="content-panel">
+        <div class="container">
+            <h2 class="animate-text"><i class="fas fa-code"></i> Projects</h2>
+            <div class="project-card animate-text">
+                <h3>Ayur Life</h3>
+                <p>An Ayurvedic hospital management system using PHP, MySQL, HTML, CSS, and JavaScript to streamline patient records, doctor appointments, treatment packages, and payments.</p>
+            </div>
+            <div class="project-card animate-text">
+                <h3>JetSetGo</h3>
+                <p>A travel booking web app using React, FastAPI, and MongoDB, featuring role-based access for admins, users, hotel managers, and guides.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Skills Section -->
+    <div id="skills" class="content-panel">
+        <div class="container">
+            <h2 class="animate-text"><i class="fas fa-cogs"></i> Technical Skills</h2>
+            <div class="skills-grid">
+                <div class="skill-item animate-text">
+                    <i class="fab fa-html5"></i>
+                    <span>HTML5</span>
+                </div>
+                <div class="skill-item animate-text">
+                    <i class="fab fa-css3-alt"></i>
+                    <span>CSS3</span>
+                </div>
+                <div class="skill-item animate-text">
+                    <i class="fab fa-js"></i>
+                    <span>JavaScript</span>
+                </div>
+                <div class="skill-item animate-text">
+                    <i class="fab fa-react"></i>
+                    <span>React</span>
+                </div>
+                <div class="skill-item animate-text">
+                    <i class="fab fa-php"></i>
+                    <span>PHP</span>
+                </div>
+                <div class="skill-item animate-text">
+                    <i class="fas fa-database"></i>
+                    <span>MySQL</span>
+                </div>
+                <div class="skill-item animate-text">
+                    <i class="fab fa-java"></i>
+                    <span>Java</span>
+                </div>
+                <div class="skill-item animate-text">
+                    <i class="fab fa-linux"></i>
+                    <span>Linux</span>
+                </div>
+                <div class="skill-item animate-text">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Cyber Security</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Volunteering Section -->
+    <div id="volunteering" class="content-panel">
+        <div class="container">
+            <h2 class="animate-text"><i class="fas fa-hands-helping"></i> Volunteering</h2>
+            <ul class="animate-text">
+                <li><strong>National Service Scheme (2022 - 2023)</strong> - Volunteer</li>
+                <li><strong>Indian Red Cross Society (IRCS) (2018 - 2020)</strong> - Cadet</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Certifications Section -->
+    <div id="certifications" class="content-panel">
+        <div class="container">
+            <h2 class="animate-text"><i class="fas fa-certificate"></i> Certifications</h2>
+            <ul class="animate-text">
+                <li>Cyber Security Analyst (CCSA) - Red Team Hacker Academy (2023)</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Contact Section -->
+    <div id="contact" class="content-panel">
+        <div class="container">
+            <h2 class="animate-text"><i class="fas fa-envelope"></i> Contact</h2>
+            <p class="animate-text">
+                Email: <a href="mailto:parthivbinish2004@gmail.com">parthivbinish2004@gmail.com</a><br>
+                LinkedIn: <a href="https://www.linkedin.com/in/parthiv-binish/">linkedin.com/in/parthiv-binish</a><br>
+                GitHub: <a href="https://github.com/ig-kingster">github.com/ig-kingster</a><br>
+                Phone: +91 6282038574<br>
+                Location: Thudanganad, Idukki, Kerala, India
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const panels = document.querySelectorAll('.content-panel');
+        let currentIndex = 0;
+        const totalItems = panels.length;
+        let isScrolling = false;
+
+        function updateActiveSection(index) {
+            panels.forEach((panel, i) => {
+                const textElements = panel.querySelectorAll('.animate-text');
+                if (i === index) {
+                    gsap.to(panel, {
+                        opacity: 1,
+                        duration: 0.5,
+                        ease: 'power2.inOut',
+                        onStart: () => panel.classList.add('active'),
+                        onComplete: () => {
+                            panel.style.pointerEvents = 'auto';
+                            textElements.forEach((el, idx) => {
+                                gsap.fromTo(el, 
+                                    { opacity: 0, y: 20 }, 
+                                    { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out', delay: idx * 0.1 }
+                                );
+                            });
+                        }
+                    });
+                } else {
+                    gsap.to(panel, {
+                        opacity: 0,
+                        duration: 0.5,
+                        ease: 'power2.inOut',
+                        onComplete: () => {
+                            panel.classList.remove('active');
+                            panel.style.pointerEvents = 'none';
+                        }
+                    });
+                }
+            });
+            currentIndex = index;
+        }
+
+        // Initial state
+        updateActiveSection(0);
+
+        // Scroll Event with Debouncing
+        window.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            if (isScrolling) return;
+
+            isScrolling = true;
+            setTimeout(() => { isScrolling = false; }, 600);
+
+            const direction = e.deltaY > 0 ? 1 : -1;
+            currentIndex = (currentIndex + direction + totalItems) % totalItems;
+            updateActiveSection(currentIndex);
+        }, { passive: false });
+
+        // Background Particles
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 40; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.top = `${Math.random() * 100}%`;
+            gsap.to(particle, {
+                y: Math.random() * 50 - 25,
+                x: Math.random() * 50 - 25,
+                opacity: Math.random() * 0.5 + 0.2,
+                duration: 3 + Math.random() * 2,
+                repeat: -1,
+                yoyo: true,
+                ease: 'sine.inOut'
+            });
+            particlesContainer.appendChild(particle);
+        }
+    </script>
+</body>
+</html>
