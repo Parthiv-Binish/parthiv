@@ -295,3 +295,50 @@ body.portfolio-building .build-revealed {
   0% { filter: brightness(1.35); }
   100% { filter: none; }
 }
+
+
+/* Live designer choreography: content stays visible; each real element is actively styled. */
+body.portfolio-building .build-type {
+  animation: designer-type-in .42s steps(12,end) both !important;
+  clip-path: inset(0 100% 0 0);
+}
+body.portfolio-building .build-draw {
+  animation: designer-draw-in .38s cubic-bezier(.2,.8,.2,1) both !important;
+  transform-origin: left center;
+}
+body.portfolio-building .build-drop {
+  animation: designer-drop-in .38s cubic-bezier(.16,1,.3,1) both !important;
+  transform-origin: center;
+}
+body.portfolio-building .build-active {
+  position: relative;
+  text-decoration-color: #398cff;
+}
+body.portfolio-building .build-active.tool-card,
+body.portfolio-building .build-active.project,
+body.portfolio-building .build-active.skill {
+  outline: 1px solid rgba(57,140,255,.72);
+  outline-offset: 3px;
+  box-shadow: 0 0 22px rgba(57,140,255,.13);
+}
+@keyframes designer-type-in {
+  0% { clip-path: inset(0 100% 0 0); filter: blur(1.5px); }
+  100% { clip-path: inset(0 0 0 0); filter: none; }
+}
+@keyframes designer-draw-in {
+  0% { transform: scaleX(.72); filter: brightness(1.55); }
+  65% { filter: brightness(1.25); }
+  100% { transform: scaleX(1); filter: none; }
+}
+@keyframes designer-drop-in {
+  0% { transform: translate(-12px,-8px) scale(.94) rotate(-1.5deg); filter: brightness(1.5); }
+  70% { transform: translate(2px,1px) scale(1.015); }
+  100% { transform: translate(0,0) scale(1) rotate(0); filter: none; }
+}
+.build-live-cursor { transition: left .18s cubic-bezier(.2,.8,.2,1), top .18s cubic-bezier(.2,.8,.2,1); }
+.build-live-status { pointer-events:none; }
+@media(prefers-reduced-motion:reduce) {
+ body.portfolio-building .build-type,
+ body.portfolio-building .build-draw,
+ body.portfolio-building .build-drop { animation:none!important; clip-path:none!important; transform:none!important; }
+}
