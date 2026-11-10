@@ -61,8 +61,8 @@ export default async function handler(req, res) {
     res.setHeader('Allow', 'POST');
     return res.status(405).json({ error: 'Method not allowed.' });
   }
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) return res.status(503).json({ error: 'Katzy is not configured yet. The site owner needs to add the OpenAI API key in Vercel.' });
+  // Anonymous public inference gateway: no account or API key required.
+  // This is a community service; availability and fair-use limits may change.
 
   const forwarded = req.headers['x-forwarded-for'];
   const ip = (typeof forwarded === 'string' ? forwarded.split(',')[0] : 'unknown').trim();
@@ -92,22 +92,26 @@ export default async function handler(req, res) {
   }
 
   try {
-    const upstream = await fetch('https://api.openai.com/v1/chat/completions', {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 25_000);
+    const upstream = await fetch('https://api.llmfaucet.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${apiKey}`,
+        Authorization: 'Bearer free',
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'gpt-4.1-mini',
+        model: 'auto',
         messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...safeMessages],
-        max_completion_tokens: 450
-      })
+        max_tokens: 450
+      }),
+      signal: controller.signal
     });
+    clearTimeout(timeout);
     const result = await upstream.json();
     if (!upstream.ok) {
-      console.error('OpenAI API error:', result.error?.type || upstream.status);
-      return res.status(502).json({ error: 'Katzy could not reach ChatGPT right now. Please try again shortly.' });
+      console.error('Katzy inference gateway error:', result.error?.message || upstream.status);
+      return res.status(upstream.status === 429 ? 429 : 502).json({ error: upstream.status === 429 ? 'Katzy is busy right now. Please try again in a little while.' : 'Katzy’s free AI provider is temporarily unavailable. Please try again shortly.' });
     }
     const reply = result.choices?.[0]?.message?.content?.trim();
     if (!reply) return res.status(502).json({ error: 'Katzy received an empty response. Please try again.' });
