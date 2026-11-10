@@ -89,14 +89,27 @@ function ConnectionAssistant(){
 }
 function BuildAnimation(){
  const [visible,setVisible]=useState(()=>{try{return !sessionStorage.getItem('portfolio_build_seen')}catch{return true}});
- const [phase,setPhase]=useState('Starting design');
+ const [phase,setPhase]=useState('Preparing the canvas');
  const [progress,setProgress]=useState(0);
  const [cursor,setCursor]=useState({x:24,y:80});
  const [clicking,setClicking]=useState(false);
  useEffect(()=>{
   if(!visible)return;
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const clean=()=>document.querySelectorAll('.build-type,.build-draw,.build-drop,.build-active').forEach(el=>el.classList.remove('build-type','build-draw','build-drop','build-active'));
+  const groups=[
+   {selector:'.header .brand, .header .nav a',label:'Creating the navigation',kind:'draw'},
+   {selector:'.hero .eyebrow, .hero h1, .hero .lead, .hero .actions',label:'Composing the hero',kind:'type'},
+   {selector:'#about .index, #about h2, #about div > p',label:'Writing the profile',kind:'type'},
+   {selector:'#experience .index, #experience .role, #experience > div > p, #experience .date, #experience .experience-tools h4',label:'Building the experience panel',kind:'draw'},
+   {selector:'#experience .tool-card',label:'Placing tool assets',kind:'drop'},
+   {selector:'#projects .section-heading, #projects .project',label:'Drawing project frames',kind:'drop'},
+   {selector:'#skills .index, #skills h2, #skills .skill',label:'Arranging the skills grid',kind:'drop'},
+   {selector:'.education .index, .education h2, .education p',label:'Adding education details',kind:'type'},
+   {selector:'footer > div, footer .bottom',label:'Finishing the contact panel',kind:'draw'}
+  ];
+  const all=groups.flatMap(g=>Array.from(document.querySelectorAll(g.selector)).map(el=>({el,kind:g.kind,label:g.label})));
+  const unique=[...new Map(all.map(item=>[item.el,item])).values()];
+  const clean=()=>unique.forEach(({el})=>el.classList.remove('build-pending','build-making','build-type','build-draw','build-drop','build-active','build-revealed'));
   const finish=()=>{
    clean();
    document.body.classList.remove('portfolio-building');
@@ -107,67 +120,54 @@ function BuildAnimation(){
   if(reduced){finish();return;}
   let cancelled=false;
   const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
-  const groups=[
-   {selector:'.header .brand, .header .nav a',label:'Laying out navigation',kind:'draw'},
-   {selector:'.hero .eyebrow, .hero h1, .hero .lead, .hero .actions',label:'Composing the introduction',kind:'type'},
-   {selector:'#about .index, #about h2, #about div > p',label:'Writing the profile',kind:'type'},
-   {selector:'#experience .index, #experience .role, #experience > div > p, #experience .date, #experience .experience-tools h4',label:'Building the experience section',kind:'draw'},
-   {selector:'#experience .tool-card',label:'Dragging in network tool logos',kind:'drop'},
-   {selector:'#projects .section-heading, #projects .project',label:'Designing project cards',kind:'drop'},
-   {selector:'#skills .index, #skills h2, #skills .skill',label:'Arranging the skill grid',kind:'drop'},
-   {selector:'.education .index, .education > div',label:'Adding education details',kind:'type'},
-   {selector:'footer > div, footer .bottom',label:'Finishing the contact area',kind:'draw'}
-  ];
-  const items=groups.flatMap(g=>Array.from(document.querySelectorAll(g.selector)).map(el=>({el,kind:g.kind,label:g.label})));
   document.body.classList.add('portfolio-building');
+  unique.forEach(({el})=>{el.classList.remove('build-revealed');el.classList.add('build-pending')});
   window.scrollTo({top:0,behavior:'instant'});
   const run=async()=>{
-   await wait(160);
+   await wait(450);
    let done=0;
-   let lastSection=null;
    for(const group of groups){
     if(cancelled)return;
-    const elements=Array.from(document.querySelectorAll(group.selector));
+    const elements=[...new Set(Array.from(document.querySelectorAll(group.selector)))];
     if(!elements.length)continue;
     setPhase(group.label);
-    const first=elements[0];
-    const section=first.closest('section,header,footer')||first;
-    if(section!==lastSection){
-     lastSection=section;
-     const r=section.getBoundingClientRect();
-     const top=Math.max(0,window.scrollY+r.top-90);
-     window.scrollTo({top,behavior:'smooth'});
-     await wait(260);
-    }
+    const section=elements[0].closest('section,header,footer')||elements[0];
+    const rect=section.getBoundingClientRect();
+    window.scrollTo({top:Math.max(0,window.scrollY+rect.top-110),behavior:'smooth'});
+    await wait(650);
     for(const el of elements){
      if(cancelled)return;
      const r=el.getBoundingClientRect();
-     setCursor({x:Math.max(14,Math.min(window.innerWidth-30,r.left+Math.min(r.width*.7,180))),y:Math.max(72,Math.min(window.innerHeight-48,r.top+Math.min(r.height*.55,70)))});
+     const x=Math.max(18,Math.min(window.innerWidth-38,r.left+Math.min(r.width*.55,150)));
+     const y=Math.max(75,Math.min(window.innerHeight-55,r.top+Math.min(r.height*.5,55)));
+     setCursor({x,y});
+     await wait(380);
      setClicking(true);
-     el.classList.remove('build-type','build-draw','build-drop','build-active');
-     void el.offsetWidth;
-     el.classList.add(group.kind==='type'?'build-type':group.kind==='drop'?'build-drop':'build-draw','build-active');
-     await wait(group.kind==='type'?190:145);
+     el.classList.remove('build-pending');
+     el.classList.add('build-making','build-active',group.kind==='type'?'build-type':group.kind==='drop'?'build-drop':'build-draw');
+     await wait(group.kind==='type'?950:720);
+     el.classList.remove('build-making','build-type','build-draw','build-drop','build-active');
+     el.classList.add('build-revealed');
      setClicking(false);
      done++;
-     setProgress(Math.round(done/items.length*100));
-     await wait(45);
+     setProgress(Math.round(done/unique.length*100));
+     await wait(170);
     }
    }
    if(cancelled)return;
-   setPhase('Design complete');
+   setPhase('Saving the finished design');
    window.scrollTo({top:0,behavior:'smooth'});
-   await wait(350);
+   await wait(900);
    if(!cancelled)finish();
   };
   run();
-  return()=>{cancelled=true;document.body.classList.remove('portfolio-building');clean()};
+  return()=>{cancelled=true;clean();document.body.classList.remove('portfolio-building')};
  },[visible]);
  if(!visible)return null;
  return <div className="build-sequence build-live" aria-hidden="true">
-  <div className="build-live-toolbar"><span className="build-live-mark">PB</span><span>PORTFOLIO / LIVE DESIGN</span><span className="build-live-state"><i/> CREATING</span></div>
-  <div className={clicking?'build-live-cursor is-clicking':'build-live-cursor'} style={{left:cursor.x,top:cursor.y}}><svg viewBox="0 0 28 34"><path d="M3 2L3 25L9.5 19L14 30L18 28L13.5 17L22 17Z" fill="#f5f8fc" stroke="#101722" strokeWidth="1.8" strokeLinejoin="round"/></svg><span>designer.cursor</span></div>
-  <div className="build-live-status"><div className="build-live-status-top"><span>LIVE DESIGN</span><strong>{progress}%</strong></div><div className="build-live-progress"><i style={{width:progress+'%'}}/></div><p>{phase}</p></div>
+  <div className="build-live-toolbar"><span className="build-live-mark">PB</span><span>PORTFOLIO / DESIGN SESSION</span><span className="build-live-state"><i/> WORKING</span></div>
+  <div className={clicking?'build-live-cursor is-clicking':'build-live-cursor'} style={{left:cursor.x,top:cursor.y}}><svg viewBox="0 0 28 34"><path d="M3 2L3 25L9.5 19L14 30L18 28L13.5 17L22 17Z" fill="#f5f8fc" stroke="#101722" strokeWidth="1.8" strokeLinejoin="round"/></svg><span>designer</span></div>
+  <div className="build-live-status"><div className="build-live-status-top"><span>DESIGNING LIVE</span><strong>{progress}%</strong></div><div className="build-live-progress"><i style={{width:progress+'%'}}/></div><p>{phase}</p></div>
  </div>;
 }
 function CookieConsent(){
