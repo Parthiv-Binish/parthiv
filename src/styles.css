@@ -136,7 +136,7 @@
 .katzy-actions{border-color:rgba(255,255,255,.12)!important}
 
 /* Portfolio creator sequence — the real page is assembled in place */
-.build-sequence{position:fixed;inset:0;z-index:9998;pointer-events:none;overflow:hidden;background:rgba(7,12,19,.84);animation:canvas-dismiss .7s ease 9.8s forwards}
+.build-sequence{position:fixed;inset:0;z-index:9998;pointer-events:none;overflow:hidden;background:rgba(7,12,19,.84);animation:canvas-dismiss .7s ease 10.7s forwards}
 .build-blueprint{position:absolute;inset:0;background-image:linear-gradient(rgba(100,157,230,.09) 1px,transparent 1px),linear-gradient(90deg,rgba(100,157,230,.09) 1px,transparent 1px);background-size:34px 34px;opacity:0;animation:canvas-grid .6s ease .15s forwards}
 .build-toolbar{position:absolute;top:18px;left:50%;transform:translateX(-50%);display:flex;gap:4px;padding:6px;background:#111c2a;border:1px solid #ffffff22;border-radius:9px;color:#aebed2;font:9px ui-monospace,monospace;box-shadow:0 10px 35px #0008;opacity:0;animation:toolbox-in .5s ease .2s forwards}
 .build-toolbar span{padding:8px 10px;border-radius:5px}.build-toolbar .build-tool-active{background:#287fe9;color:white}
