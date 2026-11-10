@@ -35,6 +35,7 @@ const legalContent = {
   ['External websites','Links to GitHub, LinkedIn and project websites are operated by third parties. Their own privacy policies and practices apply when you visit them.'],
   ['Retention and security','Technical logs are retained and protected by the hosting provider according to its operational and security policies. The site owner does not receive or maintain a separate visitor database through this portfolio.'],
   ['Your choices and requests','You may choose not to use external links. For a privacy-related question or request, contact the site owner through the LinkedIn profile linked below. Requests will be reviewed and handled where applicable law provides a right or obligation.'],
+  ['Applicable Indian privacy law','India’s Digital Personal Data Protection Act, 2023 and the DPDP Rules, 2025 have phased commencement. The main processing obligations are scheduled to commence 18 months after the November 2025 notifications, subject to the notified provisions and any subsequent changes. This policy is written for the site as it currently operates and should be reviewed if new data collection or interactive features are introduced.'],
   ['Changes','This policy may be updated if the website’s features or applicable legal requirements change. The updated date will be shown at the top of this page.']
  ]},
  '/terms': {title:'Terms of Use',updated:'10 November 2026',intro:'By using this website, you agree to the following basic terms.',sections:[
