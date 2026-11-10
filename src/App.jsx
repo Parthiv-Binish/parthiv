@@ -89,41 +89,83 @@ function ConnectionAssistant(){
 }
 function BuildAnimation(){
  const [visible,setVisible]=useState(()=>{try{return !sessionStorage.getItem('portfolio_build_seen')}catch{return true}});
+ const [phase,setPhase]=useState('Preparing the page');
+ const [progress,setProgress]=useState(0);
+ const [cursor,setCursor]=useState({x:8,y:22});
+ const [clicking,setClicking]=useState(false);
  useEffect(()=>{
   if(!visible)return;
-  document.body.classList.add('portfolio-building');
-  window.scrollTo(0,0);
-  let frame=0;
-  const started=performance.now();
-  const descend=9500,returnDuration=1200,total=descend+returnDuration;
-  const animateScroll=(now)=>{
-   const elapsed=now-started;
-   const maxScroll=Math.max(0,document.documentElement.scrollHeight-window.innerHeight);
-   if(elapsed<descend){
-    const p=elapsed/descend,e=p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;
-    window.scrollTo(0,maxScroll*e);frame=requestAnimationFrame(animateScroll);
-   }else if(elapsed<total){
-    const p=(elapsed-descend)/returnDuration;
-    window.scrollTo(0,maxScroll*(1-Math.pow(1-p,3)));frame=requestAnimationFrame(animateScroll);
-   }else window.scrollTo(0,0);
+  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const finish=()=>{
+   document.querySelectorAll('.build-pending,.build-revealed').forEach(el=>el.classList.remove('build-pending','build-revealed'));
+   document.body.classList.remove('portfolio-building');
+   try{sessionStorage.setItem('portfolio_build_seen','1')}catch{}
+   setVisible(false);
+   window.dispatchEvent(new Event('portfolio-build-complete'));
   };
-  frame=requestAnimationFrame(animateScroll);
-  const timer=setTimeout(()=>{window.scrollTo({top:0,behavior:'instant'});setVisible(false);document.body.classList.remove('portfolio-building');try{sessionStorage.setItem('portfolio_build_seen','1')}catch{};window.dispatchEvent(new Event('portfolio-build-complete'))},total+700);
-  return()=>{clearTimeout(timer);cancelAnimationFrame(frame);document.body.classList.remove('portfolio-building')};
+  if(reduced){finish();return;}
+  let cancelled=false;
+  const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+  const steps=[
+   {selector:'.header',label:'Placing the navigation'},
+   {selector:'.hero h1',label:'Writing the introduction'},
+   {selector:'.hero .lead',label:'Adding the introduction copy'},
+   {selector:'#about',label:'Building the about section'},
+   {selector:'#experience .role',label:'Adding the TCS experience'},
+   {selector:'#experience .experience-tools h4',label:'Introducing network tools'},
+   {selector:'#experience .tool-card',label:'Placing the monitoring and network platforms',all:true},
+   {selector:'#projects .section-heading',label:'Creating the projects section'},
+   {selector:'#projects .project',label:'Adding project details',all:true},
+   {selector:'#skills h2',label:'Building the technical skills section'},
+   {selector:'#skills .skill',label:'Organising technical skills',all:true},
+   {selector:'.education',label:'Adding education and certification'},
+   {selector:'footer',label:'Finishing the contact section'}
+  ];
+  const targets=steps.flatMap(step=>Array.from(document.querySelectorAll(step.selector))).filter(Boolean);
+  targets.forEach(el=>{el.classList.remove('build-revealed');el.classList.add('build-pending')});
+  document.body.classList.add('portfolio-building');
+  window.scrollTo({top:0,behavior:'instant'});
+  const run=async()=>{
+   await wait(450);
+   let completed=0;
+   for(const step of steps){
+    if(cancelled)return;
+    const elements=Array.from(document.querySelectorAll(step.selector));
+    if(!elements.length)continue;
+    setPhase(step.label);
+    for(const el of elements){
+     if(cancelled)return;
+     const rect=el.getBoundingClientRect();
+     const targetY=Math.max(0,window.scrollY+rect.top-Math.max(90,window.innerHeight*.34));
+     window.scrollTo({top:targetY,behavior:'smooth'});
+     await wait(720);
+     const current=el.getBoundingClientRect();
+     setCursor({x:Math.min(window.innerWidth-34,Math.max(18,current.left+Math.min(current.width*.45,window.innerWidth*.42))),y:Math.min(window.innerHeight-42,Math.max(88,current.top+Math.min(current.height*.35,120)))});
+     await wait(280);
+     setClicking(true);
+     el.classList.remove('build-pending');
+     el.classList.add('build-revealed');
+     await wait(180);
+     setClicking(false);
+     completed++;
+     setProgress(Math.round(completed/targets.length*100));
+     await wait(120);
+    }
+   }
+   if(cancelled)return;
+   setPhase('Final polish');
+   window.scrollTo({top:0,behavior:'smooth'});
+   await wait(950);
+   if(!cancelled)finish();
+  };
+  run();
+  return()=>{cancelled=true;document.body.classList.remove('portfolio-building');document.querySelectorAll('.build-pending,.build-revealed').forEach(el=>el.classList.remove('build-pending','build-revealed'))};
  },[visible]);
  if(!visible)return null;
- return <div className="build-sequence" aria-hidden="true">
-  <div className="build-blueprint"/>
-  <div className="build-editor-window"><div className="editor-top"><i/><i/><i/><span>PARTHIV.BINISH — DESIGN CANVAS</span></div><div className="editor-ruler">LAYERS　 FRAME 01　 AUTO LAYOUT　 ALIGN　 DISTRIBUTE</div></div>
-  <div className="build-toolbar"><span className="tool-select">↖ SELECT</span><span className="tool-type">T TYPE</span><span className="tool-shape">▱ SHAPE</span><span className="tool-image">▧ IMAGE</span><span className="tool-colour">◉ COLOUR</span></div>
-  <div className="build-cursor"><svg viewBox="0 0 28 34"><path d="M3 2L3 25L9.5 19L14 30L18 28L13.5 17L22 17Z" fill="#f5f8fc" stroke="#101722" strokeWidth="1.8" strokeLinejoin="round"/></svg><span>designer.cursor</span><b className="click-ripple"/></div>
-  <div className="build-action build-action-type"><small>TEXT TOOL · INSERT</small><strong>Infrastructure Support Engineer</strong><i/></div>
-  <div className="build-action build-action-shape"><small>FRAME TOOL · DRAW</small><i/></div>
-  <div className="build-action build-action-drag"><small>DRAGGING ASSET</small><img src="https://cdn.simpleicons.org/cisco/ffffff" alt=""/><span>→ DROP INTO TOOL CARD</span></div>
-  <div className="build-inspector"><small>DESIGN / LIVE SESSION</small><strong className="build-phase">Creating layout</strong><div className="build-inspector-line"><i/> Frame · 1440 × auto</div><div className="build-palette"><i/><i/><i/><i/><i/></div><div className="build-inspector-line">Radius <b>12 px</b></div><div className="build-inspector-line">Spacing <b>24 px</b></div></div>
-  <div className="build-image-tray"><span>ASSET LIBRARY</span><img src="https://cdn.simpleicons.org/thousandeyes/ffffff" alt=""/><img src="https://cdn.simpleicons.org/cisco/ffffff" alt=""/><img src="https://cdn.simpleicons.org/datadog/ffffff" alt=""/><img src="https://cdn.simpleicons.org/servicenow/ffffff" alt=""/></div>
-  <div className="build-status"><span className="build-status-dot"/><span className="build-status-label">PARTHIV.BINISH / DESIGN CANVAS</span><strong>Building your portfolio</strong><div className="build-progress"><i/></div><div className="build-step-caption">01 Structure → 02 Typography → 03 Components → 04 Assets → 05 Finish</div></div>
-  <div className="build-selection build-selection-a"/><div className="build-selection build-selection-b"/>
+ return <div className="build-sequence build-live" aria-hidden="true">
+  <div className="build-live-toolbar"><span className="build-live-mark">PB</span><span>PORTFOLIO / LIVE BUILD</span><span className="build-live-state"><i/> DESIGNING</span></div>
+  <div className={clicking?'build-live-cursor is-clicking':'build-live-cursor'} style={{left:cursor.x,top:cursor.y}}><svg viewBox="0 0 28 34"><path d="M3 2L3 25L9.5 19L14 30L18 28L13.5 17L22 17Z" fill="#f5f8fc" stroke="#101722" strokeWidth="1.8" strokeLinejoin="round"/></svg><span>designer.cursor</span></div>
+  <div className="build-live-status"><div className="build-live-status-top"><span>BUILD SEQUENCE</span><strong>{progress}%</strong></div><div className="build-live-progress"><i style={{width:progress+'%'}}/></div><p>{phase}</p></div>
  </div>;
 }
 function CookieConsent(){
