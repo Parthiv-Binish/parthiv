@@ -134,8 +134,5 @@ export default async function handler(req, res) {
       ? 'I’m a little busy right now 🤖 Please wait a moment and try again.'
       : 'My AI connection is temporarily unavailable. Please try again shortly.'
   });
-  } catch (error) {
-    console.error('Katzy request failed:', error.message);
-    return res.status(502).json({ error: 'A connection issue stopped Katzy from replying. Please try again.' });
-  }
+
 }
