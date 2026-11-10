@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowUpRight, ArrowDownRight, Github, Linkedin, Network, Code2, Database, Shield, Menu, X, MonitorCog, Globe2, Activity, Ticket, Layers } from 'lucide-react';
+import { ArrowUpRight, ArrowDownRight, Github, Linkedin, Network, Code2, Database, Shield, Menu, X, MonitorCog, Globe2, Radar, Activity, Ticket, Layers } from 'lucide-react';
 import { useState } from 'react';
 
 const projects = [
