@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowUpRight, ArrowDownRight, Github, Linkedin, Network, Code2, Database, Shield, Menu, X, MonitorCog, Globe2, Radar, Activity, Ticket, Layers } from 'lucide-react';
+import { ArrowUpRight, ArrowDownRight, Github, Linkedin, Network, Code2, Database, Shield, Menu, X, MonitorCog, Globe2, Radar, Activity, Ticket, Layers, Eye } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 const projects = [
@@ -89,107 +89,144 @@ function ConnectionAssistant(){
 }
 function BuildAnimation(){
  const [visible,setVisible]=useState(()=>{try{return !sessionStorage.getItem('portfolio_build_seen')}catch{return true}});
- const [phase,setPhase]=useState('Opening design workspace');
+ const [phase,setPhase]=useState('Creating a new document');
  const [progress,setProgress]=useState(0);
- const [cursor,setCursor]=useState({x:90,y:160});
- const [clicking,setClicking]=useState(false);
  const [tool,setTool]=useState('Move');
- const [selection,setSelection]=useState(null);
+ const [cursor,setCursor]=useState({x:260,y:180});
+ const [drawing,setDrawing]=useState(null);
  const [swatch,setSwatch]=useState('#398cff');
+ const [layers,setLayers]=useState(['00 · Background']);
+ const [activeLayer,setActiveLayer]=useState('00 · Background');
+ const [asset,setAsset]=useState(null);
  useEffect(()=>{
   if(!visible)return;
   let cancelled=false;
   const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
-  const clean=()=>{
-   document.querySelectorAll('.build-unmade,.build-making,.build-revealed,.build-active').forEach(el=>el.classList.remove('build-unmade','build-making','build-revealed','build-active'));
+  const reveal=(selector,kind='type')=>{
+   document.querySelectorAll(selector).forEach(el=>{
+    el.classList.remove('ps-unbuilt');
+    el.classList.add('ps-built',kind==='asset'?'ps-asset-built':kind==='shape'?'ps-shape-built':'ps-type-built');
+   });
+  };
+  const addLayer=name=>{setLayers(current=>current.includes(name)?current:[...current,name]);setActiveLayer(name)};
+  const cleanup=()=>{
    document.body.classList.remove('portfolio-building');
+   document.querySelectorAll('.ps-unbuilt,.ps-built,.ps-type-built,.ps-shape-built,.ps-asset-built,.ps-section-ready').forEach(el=>el.classList.remove('ps-unbuilt','ps-built','ps-type-built','ps-shape-built','ps-asset-built','ps-section-ready'));
   };
   const finish=()=>{
-   clean();
+   cleanup();
    try{sessionStorage.setItem('portfolio_build_seen','1')}catch{}
    setVisible(false);
    window.dispatchEvent(new Event('portfolio-build-complete'));
   };
   if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){finish();return;}
-  const groups=[
-   {selector:'.header .brand, .header .nav a',label:'Selecting and aligning the navigation',tool:'Move',kind:'draw'},
-   {selector:'.hero .eyebrow, .hero h1, .hero .lead, .hero .actions',label:'Setting type and spacing',tool:'Type',kind:'type'},
-   {selector:'#about .index, #about h2, #about div > p',label:'Composing the profile',tool:'Type',kind:'type'},
-   {selector:'#experience .index, #experience .role, #experience > div > p, #experience .date, #experience .experience-tools h4',label:'Drawing the experience layout',tool:'Rectangle',kind:'draw'},
-   {selector:'#experience .tool-card',label:'Placing and aligning tool assets',tool:'Move',kind:'drop'},
-   {selector:'#projects .section-heading, #projects .project',label:'Creating project frames',tool:'Rectangle',kind:'draw'},
-   {selector:'#skills .index, #skills h2, #skills .skill',label:'Applying colour and arranging skills',tool:'Eyedropper',kind:'drop'},
-   {selector:'.education .index, .education > div',label:'Adding final text layers',tool:'Type',kind:'type'},
-   {selector:'footer > div, footer .bottom',label:'Finishing the canvas',tool:'Brush',kind:'draw'}
-  ];
-  const targets=groups.flatMap(g=>Array.from(document.querySelectorAll(g.selector)));
-  document.body.classList.add('portfolio-building');
-  targets.forEach(el=>el.classList.add('build-unmade'));
-  window.scrollTo({top:0,behavior:'instant'});
   const run=async()=>{
+   document.body.classList.add('portfolio-building');
+   window.scrollTo({top:0,behavior:'instant'});
+   const allTargets=[
+    '.header','.hero .eyebrow','.hero h1','.hero .lead','.hero .actions',
+    '#about .index','#about h2','#about div > p',
+    '#experience .index','#experience .role','#experience > div > p','#experience .date','#experience .experience-tools h4','#experience .tool-card',
+    '#projects .section-heading','#projects .project',
+    '#skills .index','#skills h2','#skills .skill',
+    '.education .index','.education > div',
+    'footer > div','footer .bottom'
+   ];
+   allTargets.forEach(selector=>document.querySelectorAll(selector).forEach(el=>el.classList.add('ps-unbuilt')));
+   const moveTo=async(x,y)=>{setCursor({x,y});await wait(280)};
+   const selectTool=async(name,x,y)=>{setTool(name);await moveTo(x,y);await wait(180)};
+   const drawFrame=async(x,y,w,h)=>{setDrawing({x,y,w:0,h:0});await wait(80);setDrawing({x,y,w,h});await wait(420);setDrawing(null)};
+   const scrollToSection=async(selector)=>{
+    const el=document.querySelector(selector);if(!el)return;
+    const top=Math.max(0,window.scrollY+el.getBoundingClientRect().top-112);
+    window.scrollTo({top,behavior:'smooth'});await wait(420);
+   };
+   const step=async(label,amount)=>{setPhase(label);setProgress(amount);await wait(100)};
+   await wait(380);
+   await step('Setting canvas size · 1440 px',4);
+   await selectTool('Move',46,80);
+   await moveTo(Math.min(window.innerWidth*.52,720),112);
    await wait(180);
-   let done=0,lastSection=null;
-   const toolPoint={Move:{x:25,y:150},Marquee:{x:25,y:185},Lasso:{x:25,y:220},Brush:{x:25,y:255},Type:{x:25,y:290},Eyedropper:{x:25,y:325},Rectangle:{x:25,y:360}};
-   for(const group of groups){
+   await step('Drawing the page grid and section frames',9);
+   await selectTool('Rectangle',24,224);
+   await drawFrame(120,128,Math.max(220,window.innerWidth-240),Math.min(150,window.innerHeight*.22));
+   await drawFrame(120,Math.min(330,window.innerHeight*.42),Math.max(220,window.innerWidth-240),Math.min(190,window.innerHeight*.25));
+   await step('Sampling the portfolio colour palette',15);
+   await selectTool('Eyedropper',24,260);
+   await moveTo(Math.min(window.innerWidth-130,window.innerWidth*.78),58);
+   setSwatch('#1687f8');await wait(260);
+   await step('Building the navigation and hero typography',23);
+   reveal('.header','shape');addLayer('01 · Navigation');
+   await scrollToSection('.hero');
+   await selectTool('Type',24,190);
+   reveal('.hero .eyebrow');await moveTo(170,Math.max(180,window.innerHeight*.31));await wait(180);
+   reveal('.hero h1');addLayer('02 · Hero / Heading');await wait(260);
+   reveal('.hero .lead');addLayer('03 · Hero / Description');await wait(220);
+   reveal('.hero .actions','shape');addLayer('04 · Hero / Actions');
+   await step('Composing the profile section',34);
+   await scrollToSection('#about');
+   await selectTool('Rectangle',24,224);
+   const about=document.querySelector('#about');if(about){const r=about.getBoundingClientRect();await drawFrame(Math.max(90,r.left),Math.max(120,r.top),Math.max(200,r.width),Math.min(150,r.height));}
+   reveal('#about .index');reveal('#about h2');reveal('#about div > p');addLayer('05 · About / Content');
+   await step('Constructing the experience timeline',46);
+   await scrollToSection('#experience');
+   await selectTool('Rectangle',24,224);
+   const exp=document.querySelector('#experience');if(exp){const r=exp.getBoundingClientRect();await drawFrame(Math.max(90,r.left),Math.max(120,r.top),Math.max(200,r.width),Math.min(160,r.height));}
+   reveal('#experience .index');reveal('#experience .role','shape');reveal('#experience > div > p');reveal('#experience .date');reveal('#experience .experience-tools h4');addLayer('06 · Experience');
+   await step('Placing network tools and vendor assets',58);
+   await selectTool('Move',24,80);
+   const cards=Array.from(document.querySelectorAll('#experience .tool-card'));
+   for(let i=0;i<cards.length;i++){
     if(cancelled)return;
-    const elements=Array.from(document.querySelectorAll(group.selector));
-    if(!elements.length)continue;
-    setPhase(group.label);
-    const section=elements[0].closest('section,header,footer')||elements[0];
-    if(section!==lastSection){
-     lastSection=section;
-     const top=Math.max(0,window.scrollY+section.getBoundingClientRect().top-95);
-     window.scrollTo({top,behavior:'smooth'});
-     await wait(330);
-    }
-    const tp=toolPoint[group.tool]||toolPoint.Move;
-    setCursor(tp);setClicking(false);await wait(130);
-    setClicking(true);setTool(group.tool);await wait(100);setClicking(false);
-    for(const el of elements){
-     if(cancelled)return;
-     const r=el.getBoundingClientRect();
-     const x=Math.max(8,Math.min(window.innerWidth-20,r.left));
-     const y=Math.max(70,Math.min(window.innerHeight-30,r.top));
-     const w=Math.max(22,Math.min(r.width,window.innerWidth-x-10));
-     const h=Math.max(18,Math.min(r.height,window.innerHeight-y-10));
-     setCursor({x:x+Math.min(w*.12,35),y:y+Math.min(h*.2,20)});
-     setSelection({x:x+Math.min(w*.12,35),y:y+Math.min(h*.2,20),w:Math.max(20,w*.72),h:Math.max(18,h*.65),kind:group.kind});
-     await wait(100);
-     setClicking(true);await wait(65);
-     el.classList.add('build-making','build-active');
-     el.classList.remove('build-unmade');
-     setCursor({x:x+w,y:y+h});
-     await wait(group.kind==='type'?220:190);
-     el.classList.remove('build-making','build-active');
-     el.classList.add('build-revealed');
-     setClicking(false);
-     done++;
-     setProgress(Math.round(done/targets.length*100));
-     await wait(65);
-    }
+    const el=cards[i],r=el.getBoundingClientRect();
+    if(r.top>window.innerHeight-40){window.scrollBy({top:Math.min(160,r.top-window.innerHeight+120),behavior:'smooth'});await wait(180);}
+    setAsset(i);setCursor({x:Math.max(100,window.innerWidth-170),y:Math.max(130,Math.min(window.innerHeight-90,150+(i%3)*35))});
+    await wait(120);reveal('#experience .tool-card:nth-of-type('+(i+1)+')','asset');
+    el.classList.remove('ps-unbuilt');el.classList.add('ps-built','ps-asset-built');
+    setCursor({x:Math.max(110,Math.min(window.innerWidth-50,r.left+r.width*.55)),y:Math.max(120,Math.min(window.innerHeight-40,r.top+r.height*.5))});
+    await wait(150);
    }
-   if(cancelled)return;
-   setPhase('Saving finished design');
-   setTool('Move');setSelection(null);
-   window.scrollTo({top:0,behavior:'smooth'});
-   await wait(300);
+   addLayer('07 · Tools & Vendor Logos');
+   await step('Drawing project cards and placing previews',70);
+   await scrollToSection('#projects');
+   await selectTool('Rectangle',24,224);
+   reveal('#projects .section-heading');reveal('#projects .project','shape');addLayer('08 · Projects');
+   for(const [i,el] of Array.from(document.querySelectorAll('#projects .project')).entries()){
+    const r=el.getBoundingClientRect();await drawFrame(Math.max(90,r.left),Math.max(120,r.top),Math.max(120,r.width),Math.max(40,r.height));await moveTo(r.left+r.width*.72,r.top+r.height*.55);await wait(90);
+   }
+   await step('Sampling accents and styling skill groups',81);
+   await scrollToSection('#skills');
+   await selectTool('Eyedropper',24,260);setSwatch('#1687f8');
+   reveal('#skills .index');reveal('#skills h2');reveal('#skills .skill','shape');addLayer('09 · Skills & Platforms');
+   await step('Adding education and contact details',91);
+   await scrollToSection('.education');
+   await selectTool('Type',24,190);
+   reveal('.education .index');reveal('.education > div');addLayer('10 · Education');
+   await scrollToSection('footer');
+   reveal('footer > div');reveal('footer .bottom');addLayer('11 · Contact & Footer');
+   await step('Aligning layers and saving the finished design',97);
+   setTool('Move');setDrawing(null);setAsset(null);
+   await moveTo(window.innerWidth-42,20);
+   await wait(700);
    if(!cancelled)finish();
   };
   run();
-  return()=>{cancelled=true;clean()};
+  return()=>{cancelled=true;cleanup()};
  },[visible]);
  if(!visible)return null;
- const tools=[['Move','move'],['Marquee','square-dashed'],['Lasso','lasso'],['Brush','paintbrush'],['Type','type'],['Eyedropper','pipette'],['Rectangle','square']];
- return <div className="build-sequence build-live photoshop-mode" aria-hidden="true">
-  <div className="ps-topbar"><span className="ps-mark">Ps</span><span>Parthiv_Portfolio.psd</span><span className="ps-top-right">RGB / 8 &nbsp; • &nbsp; 100%</span></div>
-  <div className="ps-toolbox">{tools.map(([name,icon])=><span key={name} className={tool===name?'ps-tool selected':'ps-tool'} title={name}><i>{icon==='move'?'↖':icon==='square-dashed'?'▧':icon==='lasso'?'⌁':icon==='paintbrush'?'╱':icon==='type'?'T':icon==='pipette'?'◉':'□'}</i></span>)}</div>
-  <div className="ps-options"><b>{tool} Tool</b><span>{tool==='Rectangle'?'Shape: Blue stroke':tool==='Eyedropper'?'Sample: All layers':tool==='Type'?'Font: Manrope / 600':'Auto-select: Layer'}</span><span className="ps-colours"><i style={{background:swatch}}/><i style={{background:'#e8edf5'}}/><i style={{background:'#182536'}}/></span></div>
+ const toolDefs=[['Move','move'],['Marquee','square-dashed'],['Lasso','lasso-select'],['Brush','paintbrush'],['Type','type'],['Eyedropper','pipette'],['Rectangle','rectangle-horizontal']];
+ const layerNames=layers.slice().reverse();
+ return <div className="photoshop-mode" aria-hidden="true">
+  <div className="ps-topbar"><span className="ps-mark">Ps</span><span>Parthiv_Portfolio.psd</span><span className="ps-doc-meta">1440 × Auto px · RGB / 8</span><span className="ps-top-right">100% · Modified</span></div>
+  <div className="ps-options"><b>{tool} Tool</b><span>{tool==='Rectangle'?'Shape · Fill none · Stroke 1 px':tool==='Eyedropper'?'Sample size · Point sample':tool==='Type'?'Manrope · 600 · 48 px':'Auto-select · Layer · Align'}</span><span className="ps-fg"><i style={{background:swatch}}/>{swatch}</span></div>
+  <aside className="ps-toolbox">{toolDefs.map(([name,icon])=><div key={name} className={tool===name?'ps-tool selected':'ps-tool'}><span>{icon==='move'?'↖':icon==='square-dashed'?'▧':icon==='lasso-select'?'⌁':icon==='paintbrush'?'╱':icon==='type'?'T':icon==='pipette'?'◉':'□'}</span><small>{name}</small></div>)}</aside>
+  <aside className="ps-layers"><div className="ps-panel-heading"><span>LAYERS</span><Layers size={13}/></div><div className="ps-layer-list">{layerNames.map((name,i)=><div key={name} className={name===activeLayer?'ps-layer active':'ps-layer'}><Eye size={11}/><span className="ps-layer-thumb"/><span>{name}</span></div>)}</div><div className="ps-panel-heading ps-properties-heading">COLOUR & PROPERTIES</div><div className="ps-swatches">{['#1687f8','#101820','#e8eef5','#54718b','#8db8d9'].map(c=><i key={c} style={{background:c}}/>)}</div><div className="ps-property-line">Fill <b>{swatch}</b></div><div className="ps-property-line">Stroke <b>1 px</b></div></aside>
   <svg className="ps-selection" viewBox={`0 0 ${typeof window!=='undefined'?window.innerWidth:1200} ${typeof window!=='undefined'?window.innerHeight:800}`} preserveAspectRatio="none">
-   {selection&&<><rect x={selection.x} y={selection.y} width={selection.w} height={selection.h} fill={selection.kind==='draw'?'rgba(57,140,255,.035)':'none'} stroke="#eaf3ff" strokeWidth="1.5" strokeDasharray="5 4"/><rect x={selection.x} y={selection.y} width={selection.w} height={selection.h} fill="none" stroke="#287fe9" strokeWidth="1" strokeDasharray="5 4" className="ps-marching-ants"/></>}
+   {drawing&&<><rect x={drawing.x} y={drawing.y} width={drawing.w} height={drawing.h} fill="rgba(22,135,248,.07)" stroke="#1687f8" strokeWidth="1.5" strokeDasharray="6 4"/><path d={`M ${drawing.x} ${drawing.y+drawing.h} L ${drawing.x+drawing.w} ${drawing.y+drawing.h}`} stroke="#e8eef5" strokeWidth="1"/></>}
   </svg>
-  <div className={clicking?'build-live-cursor is-clicking':'build-live-cursor'} style={{left:cursor.x,top:cursor.y}}><svg viewBox="0 0 28 34"><path d="M3 2L3 25L9.5 19L14 30L18 28L13.5 17L22 17Z" fill="#f5f8fc" stroke="#101722" strokeWidth="1.8" strokeLinejoin="round"/></svg></div>
-  <div className="ps-colour-pop"><span>FOREGROUND COLOUR</span><div>{['#398cff','#f4f7fb','#54c7a3','#f0b65b','#182536'].map(c=><i key={c} style={{background:c}} onAnimationEnd={()=>setSwatch(c)}/>)}</div></div>
-  <div className="build-live-status"><div className="build-live-status-top"><span>{tool.toUpperCase()} TOOL</span><strong>{progress}%</strong></div><div className="build-live-progress"><i style={{width:progress+'%'}}/></div><p>{phase}</p></div>
+  <div className="ps-cursor" style={{left:cursor.x,top:cursor.y}}><svg viewBox="0 0 28 34"><path d="M3 2L3 25L9.5 19L14 30L18 28L13.5 17L22 17Z" fill="#f5f8fc" stroke="#101722" strokeWidth="1.8" strokeLinejoin="round"/></svg></div>
+  <div className="ps-asset-tray"><span>ASSETS</span>{experienceTools.slice(0,6).map(item=><div key={item.name} className={asset!==null&&experienceTools[asset]?.name===item.name?'selected':''}><img src={item.logo} alt=""/><small>{item.name}</small></div>)}</div>
+  <div className="ps-status"><div className="ps-status-head"><span>{tool.toUpperCase()} TOOL · DESIGN SESSION</span><b>{progress}%</b></div><div className="ps-progress"><i style={{width:progress+'%'}}/></div><p>{phase}</p></div>
  </div>;
 }
 function CookieConsent(){
