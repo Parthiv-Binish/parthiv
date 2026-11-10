@@ -108,7 +108,7 @@ function BuildAnimation(){
    }else window.scrollTo(0,0);
   };
   frame=requestAnimationFrame(animateScroll);
-  const timer=setTimeout(()=>{window.scrollTo({top:0,behavior:'instant'});setVisible(false);document.body.classList.remove('portfolio-building');try{sessionStorage.setItem('portfolio_build_seen','1')}catch{}},total+700);
+  const timer=setTimeout(()=>{window.scrollTo({top:0,behavior:'instant'});setVisible(false);document.body.classList.remove('portfolio-building');try{sessionStorage.setItem('portfolio_build_seen','1')}catch{};window.dispatchEvent(new Event('portfolio-build-complete'))},total+700);
   return()=>{clearTimeout(timer);cancelAnimationFrame(frame);document.body.classList.remove('portfolio-building')};
  },[visible]);
  if(!visible)return null;
@@ -128,9 +128,11 @@ function BuildAnimation(){
 }
 function CookieConsent(){
  const [choice,setChoice]=useState(()=>{try{return localStorage.getItem('portfolio_cookie_choice')}catch{return null}});
+ const [ready,setReady]=useState(()=>{try{return !!sessionStorage.getItem('portfolio_build_seen')}catch{return true}});
  const [details,setDetails]=useState(false);
+ useEffect(()=>{const show=()=>setReady(true);window.addEventListener('portfolio-build-complete',show);return()=>window.removeEventListener('portfolio-build-complete',show)},[]);
  const save=(value)=>{try{localStorage.setItem('portfolio_cookie_choice',value)}catch{};setChoice(value)};
- if(choice)return null;
+ if(choice||!ready)return null;
  return <aside className="cookie-consent" aria-label="Cookie preferences"><div className="cookie-copy"><span className="cookie-eyebrow">YOUR PRIVACY</span><h3>Cookies on this website</h3><p>This portfolio does not use advertising or analytics cookies. Essential storage may be used to remember your choice and keep the site working. Read the <a href="/cookie-policy">Cookie Policy</a>.</p>{details&&<p className="cookie-detail">No optional tracking is enabled. Choosing “Essential only” saves your preference in your browser. External websites such as LinkedIn and GitHub have their own cookie practices.</p>}</div><div className="cookie-actions"><button className="cookie-accept" onClick={()=>save('accepted')}>Accept & continue</button><button className="cookie-essential" onClick={()=>save('essential')}>Essential only</button><button className="cookie-customize" onClick={()=>setDetails(v=>!v)}>{details?'Hide details':'More info'}</button></div></aside>;
 }
 export default function App(){
