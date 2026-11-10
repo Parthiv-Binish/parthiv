@@ -187,3 +187,54 @@ body.portfolio-building main .skill:nth-child(1){animation-delay:6.75s}body.port
 @keyframes canvas-grid{to{opacity:.2}}@keyframes toolbox-in{to{opacity:1}}@keyframes inspector-show{to{opacity:1}}@keyframes asset-tray{to{opacity:1}}@keyframes canvas-dismiss{to{opacity:0;visibility:hidden}}@keyframes progress-build{to{transform:scaleX(1)}}@keyframes dot-pulse{to{opacity:.35;box-shadow:0 0 3px #398cff}}
 @media(max-width:640px){.build-inspector{right:10px;top:17%;width:150px;padding:10px}.build-toolbar{top:10px;gap:0}.build-toolbar span{padding:7px 6px;font-size:8px}.build-image-tray{bottom:19%;gap:9px}.build-status{bottom:14px}.build-selection-a{width:84%;height:31%}.build-selection-b{height:15%}}
 @media(prefers-reduced-motion:reduce){.build-sequence{display:none}body.portfolio-building main>.header,body.portfolio-building main>.hero,body.portfolio-building main>.split,body.portfolio-building main>.projects,body.portfolio-building main>footer{opacity:1;animation:none}body.portfolio-building main .tool-card,body.portfolio-building main .skill,body.portfolio-building main .project{opacity:1;animation:none}}
+
+
+/* Interactive creator choreography: visible clicks, typing, drawing, dragging and painting */
+.build-sequence{background:rgba(7,12,19,.78);animation-duration:.7s;animation-delay:10.7s}
+.build-editor-window{position:absolute;left:5%;top:10%;width:65%;height:56%;border:1px solid #82b8ff66;border-radius:10px;background:linear-gradient(145deg,#111c2aee,#0b1420ee);box-shadow:0 22px 80px #0009;opacity:0;animation:editor-open .5s ease .15s forwards}
+.editor-top{height:36px;display:flex;align-items:center;gap:7px;padding:0 12px;border-bottom:1px solid #ffffff18;color:#9db2ca;font:8px ui-monospace,monospace}
+.editor-top i{width:7px;height:7px;border-radius:50%;background:#ff6f68}.editor-top i:nth-child(2){background:#f3c45c}.editor-top i:nth-child(3){background:#56c98b}.editor-top span{margin-left:9px;letter-spacing:.12em}
+.editor-ruler{padding:10px 14px;color:#70869f;font:8px ui-monospace,monospace;letter-spacing:.08em}
+.build-toolbar{z-index:8}
+.build-toolbar span{position:relative;transition:background .15s,color .15s}
+.build-toolbar .tool-select{animation:select-tool .55s 0s both}
+.build-toolbar .tool-type{animation:activate-tool .65s 1.7s both}
+.build-toolbar .tool-shape{animation:activate-tool .65s 3.1s both}
+.build-toolbar .tool-image{animation:activate-tool .65s 5.35s both}
+.build-toolbar .tool-colour{animation:activate-tool .65s 6.05s both}
+.build-cursor{z-index:12;animation:creator-click-path 10.65s cubic-bezier(.55,0,.25,1) forwards}
+.build-cursor:after{content:"";position:absolute;left:4px;top:3px;width:19px;height:19px;border:1px solid #79b7ff;border-radius:50%;opacity:0;animation:click-feedback 10.65s linear forwards}
+.click-ripple{position:absolute;left:0;top:0;width:26px;height:26px;border:2px solid #65aaff;border-radius:50%;opacity:0;animation:click-rings 10.65s linear infinite}
+.build-action{position:absolute;z-index:7;padding:10px 13px;border:1px solid #75adff88;border-radius:7px;background:#101c2bea;color:#e9f2ff;box-shadow:0 10px 35px #0008;font:9px ui-monospace,monospace;opacity:0}
+.build-action small{display:block;color:#83b9ff;font-size:8px;letter-spacing:.12em;margin-bottom:8px}
+.build-action-type{left:13%;top:27%;width:min(390px,52vw);animation:type-action 2.1s 1.8s steps(1,end) both}
+.build-action-type strong{display:block;font:600 clamp(12px,1.5vw,19px) Manrope;white-space:nowrap;overflow:hidden;width:0;border-right:1px solid #8fc2ff;animation:typing-text 1.5s steps(31,end) 2.25s forwards}
+.build-action-type>i{display:block;height:2px;background:#287fe9;width:0;margin-top:9px;animation:underline-draw .5s 3.65s forwards}
+.build-action-shape{left:15%;top:47%;width:30%;height:18%;animation:shape-action 1.35s 3.15s both}
+.build-action-shape>i{position:absolute;inset:29px 12px 12px;border:1px solid #70b4ff;border-radius:2px;animation:shape-round .6s 4.1s forwards}
+.build-action-drag{left:39%;top:57%;display:flex;align-items:center;gap:10px;animation:drag-action 1.6s 5.35s both}
+.build-action-drag small{position:absolute;top:-17px;left:0;white-space:nowrap}
+.build-action-drag img{width:26px;height:26px;animation:drag-logo .95s 5.65s both}
+.build-action-drag span{color:#9cb0c8;font-size:8px}
+.build-inspector{animation:inspector-show .5s ease 2.8s forwards}
+.build-palette i{animation:paint-swatch .45s ease 6.1s both}
+.build-palette i:nth-child(2){animation-delay:6.25s}.build-palette i:nth-child(3){animation-delay:6.4s}.build-palette i:nth-child(4){animation-delay:6.55s}.build-palette i:nth-child(5){animation-delay:6.7s}
+.build-image-tray{animation:asset-tray .5s ease 5.15s forwards}
+.build-image-tray img{animation:asset-pick .5s ease 5.55s both}
+.build-image-tray img:nth-of-type(2){animation-delay:5.75s}.build-image-tray img:nth-of-type(3){animation-delay:5.95s}.build-image-tray img:nth-of-type(4){animation-delay:6.15s}
+@keyframes editor-open{to{opacity:1}}
+@keyframes select-tool{0%,100%{background:#287fe9;color:#fff}50%{background:#36516f;color:#dceaff}}
+@keyframes activate-tool{0%,100%{background:#287fe9;color:#fff;box-shadow:0 0 0 2px #83baff55}50%{background:#17283c;color:#aebed2;box-shadow:none}}
+@keyframes creator-click-path{0%{transform:translate(0,0)}8%{transform:translate(28vw,2vh)}12%{transform:translate(28vw,2vh) scale(.88)}15%{transform:translate(28vw,2vh)}20%{transform:translate(16vw,17vh)}24%{transform:translate(16vw,17vh) scale(.88)}28%{transform:translate(16vw,17vh)}36%{transform:translate(37vw,29vh)}40%{transform:translate(37vw,29vh) scale(.88)}44%{transform:translate(37vw,29vh)}52%{transform:translate(57vw,43vh)}56%{transform:translate(57vw,43vh) scale(.88)}60%{transform:translate(57vw,43vh)}70%{transform:translate(75vw,17vh)}74%{transform:translate(75vw,17vh) scale(.88)}78%{transform:translate(75vw,17vh)}90%{transform:translate(23vw,65vh)}100%{transform:translate(23vw,65vh)}}
+@keyframes click-rings{0%,7%,11%,19%,23%,35%,39%,51%,55%,69%,73%,89%,93%,100%{opacity:0;transform:scale(.5)}8%,12%,20%,24%,36%,40%,52%,56%,70%,74%,90%,94%{opacity:1;transform:scale(1.8)}}
+@keyframes click-feedback{0%,100%{opacity:0}9%,13%,21%,25%,37%,41%,53%,57%,71%,75%{opacity:1}}
+@keyframes type-action{0%{opacity:0;transform:translateY(8px)}12%,82%{opacity:1;transform:none}100%{opacity:0}}
+@keyframes typing-text{to{width:100%}}
+@keyframes underline-draw{to{width:100%}}
+@keyframes shape-action{0%{opacity:0;transform:scale(.8)}20%,80%{opacity:1;transform:scale(1)}100%{opacity:0}}
+@keyframes shape-round{to{border-radius:12px;background:#287fe922}}
+@keyframes drag-action{0%{opacity:0;transform:translate(-30px,18px)}18%,80%{opacity:1;transform:translate(0,0)}100%{opacity:0;transform:translate(80px,-35px)}}
+@keyframes drag-logo{0%{transform:scale(.6);filter:grayscale(1)}45%{transform:scale(1.2)}100%{transform:scale(1);filter:none}}
+@keyframes asset-pick{0%{transform:scale(.7);opacity:.35}100%{transform:scale(1);opacity:1}}
+@keyframes paint-swatch{0%{transform:scale(.7);filter:grayscale(1)}100%{transform:scale(1);filter:none}}
+@media(max-width:640px){.build-editor-window{left:3%;top:14%;width:94%;height:49%}.build-inspector{top:22%;right:8px;width:132px}.build-action-type{left:8%;top:32%;width:65vw}.build-action-shape{left:8%;top:51%;width:48%;height:13%}.build-action-drag{left:23%;top:62%}.build-image-tray{bottom:22%;gap:8px}.build-image-tray img{width:19px;height:19px}}
