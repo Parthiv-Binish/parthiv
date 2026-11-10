@@ -89,15 +89,16 @@ function ConnectionAssistant(){
 }
 function BuildAnimation(){
  const [visible,setVisible]=useState(()=>{try{return !sessionStorage.getItem('portfolio_build_seen')}catch{return true}});
- const [phase,setPhase]=useState('Preparing the page');
+ const [phase,setPhase]=useState('Starting design');
  const [progress,setProgress]=useState(0);
- const [cursor,setCursor]=useState({x:8,y:22});
+ const [cursor,setCursor]=useState({x:24,y:80});
  const [clicking,setClicking]=useState(false);
  useEffect(()=>{
   if(!visible)return;
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const clean=()=>document.querySelectorAll('.build-type,.build-draw,.build-drop,.build-active').forEach(el=>el.classList.remove('build-type','build-draw','build-drop','build-active'));
   const finish=()=>{
-   document.querySelectorAll('.build-pending,.build-revealed').forEach(el=>el.classList.remove('build-pending','build-revealed'));
+   clean();
    document.body.classList.remove('portfolio-building');
    try{sessionStorage.setItem('portfolio_build_seen','1')}catch{}
    setVisible(false);
@@ -106,66 +107,67 @@ function BuildAnimation(){
   if(reduced){finish();return;}
   let cancelled=false;
   const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
-  const steps=[
-   {selector:'.header',label:'Placing the navigation'},
-   {selector:'.hero h1',label:'Writing the introduction'},
-   {selector:'.hero .lead',label:'Adding the introduction copy'},
-   {selector:'#about',label:'Building the about section'},
-   {selector:'#experience .role',label:'Adding the TCS experience'},
-   {selector:'#experience .experience-tools h4',label:'Introducing network tools'},
-   {selector:'#experience .tool-card',label:'Placing the monitoring and network platforms',all:true},
-   {selector:'#projects .section-heading',label:'Creating the projects section'},
-   {selector:'#projects .project',label:'Adding project details',all:true},
-   {selector:'#skills h2',label:'Building the technical skills section'},
-   {selector:'#skills .skill',label:'Organising technical skills',all:true},
-   {selector:'.education',label:'Adding education and certification'},
-   {selector:'footer',label:'Finishing the contact section'}
+  const groups=[
+   {selector:'.header .brand, .header .nav a',label:'Laying out navigation',kind:'draw'},
+   {selector:'.hero .eyebrow, .hero h1, .hero .lead, .hero .actions',label:'Composing the introduction',kind:'type'},
+   {selector:'#about .index, #about h2, #about div > p',label:'Writing the profile',kind:'type'},
+   {selector:'#experience .index, #experience .role, #experience > div > p, #experience .date, #experience .experience-tools h4',label:'Building the experience section',kind:'draw'},
+   {selector:'#experience .tool-card',label:'Dragging in network tool logos',kind:'drop'},
+   {selector:'#projects .section-heading, #projects .project',label:'Designing project cards',kind:'drop'},
+   {selector:'#skills .index, #skills h2, #skills .skill',label:'Arranging the skill grid',kind:'drop'},
+   {selector:'.education .index, .education > div',label:'Adding education details',kind:'type'},
+   {selector:'footer > div, footer .bottom',label:'Finishing the contact area',kind:'draw'}
   ];
-  const targets=steps.flatMap(step=>Array.from(document.querySelectorAll(step.selector))).filter(Boolean);
-  targets.forEach(el=>{el.classList.remove('build-revealed');el.classList.add('build-pending')});
+  const items=groups.flatMap(g=>Array.from(document.querySelectorAll(g.selector)).map(el=>({el,kind:g.kind,label:g.label})));
   document.body.classList.add('portfolio-building');
   window.scrollTo({top:0,behavior:'instant'});
   const run=async()=>{
-   await wait(450);
-   let completed=0;
-   for(const step of steps){
+   await wait(160);
+   let done=0;
+   let lastSection=null;
+   for(const group of groups){
     if(cancelled)return;
-    const elements=Array.from(document.querySelectorAll(step.selector));
+    const elements=Array.from(document.querySelectorAll(group.selector));
     if(!elements.length)continue;
-    setPhase(step.label);
+    setPhase(group.label);
+    const first=elements[0];
+    const section=first.closest('section,header,footer')||first;
+    if(section!==lastSection){
+     lastSection=section;
+     const r=section.getBoundingClientRect();
+     const top=Math.max(0,window.scrollY+r.top-90);
+     window.scrollTo({top,behavior:'smooth'});
+     await wait(260);
+    }
     for(const el of elements){
      if(cancelled)return;
-     const rect=el.getBoundingClientRect();
-     const targetY=Math.max(0,window.scrollY+rect.top-Math.max(90,window.innerHeight*.34));
-     window.scrollTo({top:targetY,behavior:'smooth'});
-     await wait(720);
-     const current=el.getBoundingClientRect();
-     setCursor({x:Math.min(window.innerWidth-34,Math.max(18,current.left+Math.min(current.width*.45,window.innerWidth*.42))),y:Math.min(window.innerHeight-42,Math.max(88,current.top+Math.min(current.height*.35,120)))});
-     await wait(280);
+     const r=el.getBoundingClientRect();
+     setCursor({x:Math.max(14,Math.min(window.innerWidth-30,r.left+Math.min(r.width*.7,180))),y:Math.max(72,Math.min(window.innerHeight-48,r.top+Math.min(r.height*.55,70)))});
      setClicking(true);
-     el.classList.remove('build-pending');
-     el.classList.add('build-revealed');
-     await wait(180);
+     el.classList.remove('build-type','build-draw','build-drop','build-active');
+     void el.offsetWidth;
+     el.classList.add(group.kind==='type'?'build-type':group.kind==='drop'?'build-drop':'build-draw','build-active');
+     await wait(group.kind==='type'?190:145);
      setClicking(false);
-     completed++;
-     setProgress(Math.round(completed/targets.length*100));
-     await wait(120);
+     done++;
+     setProgress(Math.round(done/items.length*100));
+     await wait(45);
     }
    }
    if(cancelled)return;
-   setPhase('Final polish');
+   setPhase('Design complete');
    window.scrollTo({top:0,behavior:'smooth'});
-   await wait(950);
+   await wait(350);
    if(!cancelled)finish();
   };
   run();
-  return()=>{cancelled=true;document.body.classList.remove('portfolio-building');document.querySelectorAll('.build-pending,.build-revealed').forEach(el=>el.classList.remove('build-pending','build-revealed'))};
+  return()=>{cancelled=true;document.body.classList.remove('portfolio-building');clean()};
  },[visible]);
  if(!visible)return null;
  return <div className="build-sequence build-live" aria-hidden="true">
-  <div className="build-live-toolbar"><span className="build-live-mark">PB</span><span>PORTFOLIO / LIVE BUILD</span><span className="build-live-state"><i/> DESIGNING</span></div>
+  <div className="build-live-toolbar"><span className="build-live-mark">PB</span><span>PORTFOLIO / LIVE DESIGN</span><span className="build-live-state"><i/> CREATING</span></div>
   <div className={clicking?'build-live-cursor is-clicking':'build-live-cursor'} style={{left:cursor.x,top:cursor.y}}><svg viewBox="0 0 28 34"><path d="M3 2L3 25L9.5 19L14 30L18 28L13.5 17L22 17Z" fill="#f5f8fc" stroke="#101722" strokeWidth="1.8" strokeLinejoin="round"/></svg><span>designer.cursor</span></div>
-  <div className="build-live-status"><div className="build-live-status-top"><span>BUILD SEQUENCE</span><strong>{progress}%</strong></div><div className="build-live-progress"><i style={{width:progress+'%'}}/></div><p>{phase}</p></div>
+  <div className="build-live-status"><div className="build-live-status-top"><span>LIVE DESIGN</span><strong>{progress}%</strong></div><div className="build-live-progress"><i style={{width:progress+'%'}}/></div><p>{phase}</p></div>
  </div>;
 }
 function CookieConsent(){
