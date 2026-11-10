@@ -342,3 +342,60 @@ body.portfolio-building .build-active.skill {
  body.portfolio-building .build-draw,
  body.portfolio-building .build-drop { animation:none!important; clip-path:none!important; transform:none!important; }
 }
+
+/* Staged designer workflow: the canvas starts empty and each real element is built before it appears. */
+body.portfolio-building main .build-pending {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  animation: none !important;
+}
+body.portfolio-building main .build-making {
+  opacity: 1 !important;
+  visibility: visible !important;
+  will-change: clip-path, transform, opacity, filter;
+}
+body.portfolio-building main .build-making.build-type {
+  clip-path: inset(0 100% 0 0);
+  animation: photoshop-type 1s steps(24, end) forwards !important;
+}
+body.portfolio-building main .build-making.build-draw {
+  clip-path: inset(0 100% 0 0);
+  animation: photoshop-draw .78s cubic-bezier(.45,0,.2,1) forwards !important;
+}
+body.portfolio-building main .build-making.build-drop {
+  clip-path: inset(0 0 100% 0);
+  animation: photoshop-place .78s cubic-bezier(.16,1,.3,1) forwards !important;
+}
+body.portfolio-building main .build-making.build-active {
+  outline: 1px solid rgba(77,155,255,.85);
+  outline-offset: 4px;
+}
+body.portfolio-building main .build-revealed {
+  opacity: 1 !important;
+  visibility: visible !important;
+  clip-path: none !important;
+  filter: none !important;
+}
+body.portfolio-building main .build-revealed.tool-card,
+body.portfolio-building main .build-revealed.project,
+body.portfolio-building main .build-revealed.skill {
+  outline: none;
+  border-color: rgba(77,155,255,.35);
+}
+@keyframes photoshop-type {
+  0% { clip-path: inset(0 100% 0 0); filter: blur(2px); }
+  100% { clip-path: inset(0 0 0 0); filter: none; }
+}
+@keyframes photoshop-draw {
+  0% { clip-path: inset(0 100% 0 0); filter: brightness(1.65); }
+  70% { clip-path: inset(0 0 0 0); filter: brightness(1.2); }
+  100% { clip-path: inset(0 0 0 0); filter: none; }
+}
+@keyframes photoshop-place {
+  0% { clip-path: inset(0 0 100% 0); transform: translate(18px,12px) scale(.94); filter: brightness(1.6); }
+  72% { clip-path: inset(0); transform: translate(-2px,-2px) scale(1.015); }
+  100% { clip-path: inset(0); transform: none; filter: none; }
+}
+.build-live-cursor {
+  transition: left .42s cubic-bezier(.2,.7,.2,1), top .42s cubic-bezier(.2,.7,.2,1) !important;
+}
