@@ -238,3 +238,29 @@ body.portfolio-building main .skill:nth-child(1){animation-delay:6.75s}body.port
 @keyframes asset-pick{0%{transform:scale(.7);opacity:.35}100%{transform:scale(1);opacity:1}}
 @keyframes paint-swatch{0%{transform:scale(.7);filter:grayscale(1)}100%{transform:scale(1);filter:none}}
 @media(max-width:640px){.build-editor-window{left:3%;top:14%;width:94%;height:49%}.build-inspector{top:22%;right:8px;width:132px}.build-action-type{left:8%;top:32%;width:65vw}.build-action-shape{left:8%;top:51%;width:48%;height:13%}.build-action-drag{left:23%;top:62%}.build-image-tray{bottom:22%;gap:8px}.build-image-tray img{width:19px;height:19px}}
+
+
+/* Synchronized page-build sequence: cursor targets the real content it reveals */
+.build-sequence.build-live{position:fixed;inset:0;z-index:9998;pointer-events:none;background:transparent;overflow:hidden}
+.build-live-toolbar{position:fixed;top:14px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:12px;padding:8px 12px;border:1px solid rgba(135,177,232,.3);border-radius:7px;background:rgba(12,20,31,.94);box-shadow:0 8px 28px #0007;color:#cbd8e8;font:9px ui-monospace,monospace;letter-spacing:.09em;white-space:nowrap}
+.build-live-mark{display:grid;place-items:center;width:20px;height:20px;border-radius:4px;background:#287fe9;color:white;font-weight:700;letter-spacing:0}
+.build-live-state{display:flex;align-items:center;gap:6px;color:#8ea2ba}
+.build-live-state i{width:6px;height:6px;border-radius:50%;background:#55d6a2;box-shadow:0 0 9px #55d6a2}
+.build-live-cursor{position:fixed;z-index:3;display:flex;align-items:flex-start;gap:3px;transform:translate(-2px,-2px);transition:left .72s cubic-bezier(.2,.7,.2,1),top .72s cubic-bezier(.2,.7,.2,1);filter:drop-shadow(0 3px 4px #0009)}
+.build-live-cursor svg{width:25px;height:31px;flex:none}
+.build-live-cursor span{margin:23px 0 0 -3px;padding:4px 6px;border-radius:3px;background:#287fe9;color:white;font:8px ui-monospace,monospace;white-space:nowrap}
+.build-live-cursor:after{content:"";position:absolute;left:3px;top:3px;width:19px;height:19px;border:1px solid #8bc2ff;border-radius:50%;opacity:0;transform:scale(.5)}
+.build-live-cursor.is-clicking:after{animation:live-click .42s ease-out}
+@keyframes live-click{0%{opacity:1;transform:scale(.5)}100%{opacity:0;transform:scale(2.1)}}
+.build-live-status{position:fixed;left:22px;bottom:20px;width:min(290px,calc(100vw - 44px));padding:12px 14px;border:1px solid rgba(135,177,232,.25);border-radius:7px;background:rgba(12,20,31,.94);box-shadow:0 8px 28px #0007;color:#dce8f7}
+.build-live-status-top{display:flex;justify-content:space-between;align-items:center;font:8px ui-monospace,monospace;letter-spacing:.12em;color:#8fa8c7}
+.build-live-status-top strong{font-size:10px;color:#dce8f7}
+.build-live-progress{height:2px;margin-top:9px;background:#26374c;overflow:hidden}
+.build-live-progress i{display:block;height:100%;background:#398cff;transition:width .3s ease}
+.build-live-status p{font:500 11px Manrope;margin:9px 0 0;color:#dce8f7}
+body.portfolio-building .build-pending{opacity:0!important;visibility:hidden!important}
+body.portfolio-building .build-revealed{animation:live-content-reveal .55s cubic-bezier(.2,.75,.25,1) both}
+@keyframes live-content-reveal{from{opacity:0;visibility:visible;transform:translateY(12px);filter:blur(3px)}to{opacity:1;visibility:visible;transform:translateY(0);filter:none}}
+body.portfolio-building .build-revealed.tool-card,body.portfolio-building .build-revealed.project,body.portfolio-building .build-revealed.skill{border-color:rgba(91,158,245,.45);box-shadow:0 0 0 1px rgba(57,140,255,.08)}
+@media(max-width:640px){.build-live-toolbar{top:9px;padding:7px 9px;gap:8px;font-size:8px}.build-live-status{left:12px;bottom:12px;width:min(250px,calc(100vw - 24px));padding:10px 12px}.build-live-cursor span{font-size:7px}}
+@media(prefers-reduced-motion:reduce){.build-sequence.build-live{display:none}body.portfolio-building .build-pending{opacity:1!important;visibility:visible!important}body.portfolio-building .build-revealed{animation:none}}
