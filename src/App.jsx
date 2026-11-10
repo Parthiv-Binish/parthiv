@@ -77,7 +77,10 @@ function ConnectionAssistant(){
  const [messages,setMessages]=useState([]);
  const [input,setInput]=useState('');
  const [sending,setSending]=useState(false);
+ const [typing,setTyping]=useState(false);
  const [error,setError]=useState('');
+ const bottomRef=useRef(null);
+ useEffect(()=>{bottomRef.current?.scrollIntoView({behavior:'smooth',block:'end'});},[messages,typing,error]);
  const [greeting]=useState(()=>{const hour=new Date().getHours();return hour<12?'Good morning':hour<17?'Good afternoon':'Good evening'});
  const prompts=['Tell me about your TCS experience','Which network tools do you use?','Tell me about VALO Community'];
  const sendMessage=async(text)=>{const clean=text.trim();if(!clean||sending)return;const next=[...messages,{role:'user',content:clean}].slice(-12);setMessages(next);setInput('');setError('');setSending(true);setTyping(true);try{const response=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:next})});const data=await response.json();if(!response.ok)throw new Error(data.error||'Katzy could not respond right now. Please try again.');const reply=String(data.reply||'').trim();setTyping(false);setMessages([...next,{role:'assistant',content:''}]);const words=reply.match(/\\S+\\s*/g)||[reply];let visible='';for(let i=0;i<words.length;i++){visible+=words[i];setMessages([...next,{role:'assistant',content:visible}]);await new Promise(resolve=>setTimeout(resolve,42));}}catch(err){setTyping(false);setError(err.message||'Something went wrong. Please try again.');}finally{setSending(false);}};
