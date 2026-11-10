@@ -94,14 +94,13 @@ export default async function handler(req, res) {
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 25_000);
-    const upstream = await fetch('https://api.llmfaucet.dev/v1/chat/completions', {
+    const upstream = await fetch('https://text.pollinations.ai/openai', {
       method: 'POST',
       headers: {
-        Authorization: 'Bearer free',
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'auto',
+        model: 'openai-fast',
         messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...safeMessages],
         max_tokens: 450
       }),
