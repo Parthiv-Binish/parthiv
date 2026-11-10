@@ -419,3 +419,40 @@ body.portfolio-building .build-live-cursor { transition:left .12s ease-out,top .
   0% { transform:translate(-8px,-5px) scale(.96); filter:brightness(1.3); }
   100% { transform:translate(0,0) scale(1); filter:none; }
 }
+
+
+/* Photoshop-like design workspace: actual page elements are constructed in sequence. */
+body.portfolio-building main .build-unmade{visibility:hidden!important;opacity:0!important;animation:none!important}
+body.portfolio-building main .build-making{visibility:visible!important;opacity:1!important;will-change:clip-path,transform,filter}
+body.portfolio-building main .build-making.build-type{clip-path:inset(0 100% 0 0);animation:ps-type .28s steps(18,end) forwards!important}
+body.portfolio-building main .build-making.build-draw{clip-path:inset(0 100% 0 0);animation:ps-draw .26s ease-out forwards!important}
+body.portfolio-building main .build-making.build-drop{clip-path:inset(0 0 100% 0);animation:ps-place .28s cubic-bezier(.16,1,.3,1) forwards!important}
+body.portfolio-building main .build-revealed{visibility:visible!important;opacity:1!important;clip-path:none!important;filter:none!important;animation:none!important}
+body.portfolio-building main .build-revealed.tool-card,
+body.portfolio-building main .build-revealed.project,
+body.portfolio-building main .build-revealed.skill{outline:none;border-color:rgba(57,140,255,.32)}
+@keyframes ps-type{to{clip-path:inset(0);filter:none}}
+@keyframes ps-draw{to{clip-path:inset(0);filter:none}}
+@keyframes ps-place{0%{clip-path:inset(0 0 100% 0);transform:translate(12px,8px) scale(.97)}100%{clip-path:inset(0);transform:none}}
+.photoshop-mode{position:fixed;inset:0;z-index:9998;pointer-events:none;background:transparent;overflow:hidden}
+.ps-topbar{position:fixed;top:0;left:0;right:0;height:38px;display:flex;align-items:center;gap:12px;padding:0 14px;background:#161a20ed;border-bottom:1px solid #56627366;color:#d8e0eb;font:11px ui-monospace,monospace;box-shadow:0 3px 14px #0005}
+.ps-mark{display:grid;place-items:center;width:23px;height:23px;border-radius:4px;background:#173d68;color:#8fc7ff;font:bold 15px Georgia}
+.ps-top-right{margin-left:auto;color:#8293a9;font-size:9px}
+.ps-toolbox{position:fixed;top:48px;left:10px;display:grid;grid-template-columns:repeat(2,30px);gap:4px;padding:7px;background:#191e26ee;border:1px solid #69778955;border-radius:6px;box-shadow:0 6px 22px #0006}
+.ps-tool{height:29px;width:30px;display:grid;place-items:center;color:#aebed1;border-radius:3px;font:16px Arial}
+.ps-tool.selected{background:#24558b;color:#fff;box-shadow:inset 0 0 0 1px #7dbaff}
+.ps-tool i{font-style:normal}
+.ps-options{position:fixed;top:48px;left:88px;display:flex;align-items:center;gap:15px;padding:8px 12px;border:1px solid #69778955;border-radius:5px;background:#191e26ee;color:#b8c5d5;font:9px ui-monospace,monospace}
+.ps-options b{color:#e7effa;font-size:10px}
+.ps-colours{display:flex;gap:3px}.ps-colours i{width:10px;height:10px;border:1px solid #ffffff55;border-radius:2px}
+.ps-selection{position:fixed;inset:0;width:100%;height:100%;overflow:visible}
+.ps-marching-ants{animation:ps-ants .7s linear infinite}
+@keyframes ps-ants{to{stroke-dashoffset:-18}}
+.ps-colour-pop{position:fixed;right:18px;top:52px;padding:8px 10px;border:1px solid #69778955;border-radius:5px;background:#191e26ee;color:#8fa2bb;font:8px ui-monospace,monospace}
+.ps-colour-pop div{display:flex;gap:5px;margin-top:7px}
+.ps-colour-pop i{width:15px;height:15px;border:1px solid #ffffff55;border-radius:3px}
+.photoshop-mode .build-live-cursor{position:fixed;z-index:10;transition:left .16s ease-out,top .16s ease-out;filter:drop-shadow(0 2px 3px #0009)}
+.photoshop-mode .build-live-cursor svg{width:25px;height:31px}
+.photoshop-mode .build-live-status{left:14px;bottom:14px;width:min(280px,calc(100vw - 28px));padding:10px 12px;border:1px solid #71839b55;border-radius:5px;background:#171d26ed;box-shadow:0 6px 20px #0007}
+@media(max-width:600px){.ps-options{left:58px;top:91px;gap:7px;padding:6px;font-size:7px}.ps-toolbox{top:48px;left:6px;grid-template-columns:repeat(2,26px);gap:3px}.ps-tool{width:26px;height:26px}.ps-colour-pop{top:136px;right:8px}.ps-topbar{height:34px}.photoshop-mode .build-live-status{bottom:10px}}
+@media(prefers-reduced-motion:reduce){.photoshop-mode{display:none!important}body.portfolio-building main .build-unmade{visibility:visible!important;opacity:1!important}}
