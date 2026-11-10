@@ -264,3 +264,8 @@ body.portfolio-building .build-revealed{animation:live-content-reveal .55s cubic
 body.portfolio-building .build-revealed.tool-card,body.portfolio-building .build-revealed.project,body.portfolio-building .build-revealed.skill{border-color:rgba(91,158,245,.45);box-shadow:0 0 0 1px rgba(57,140,255,.08)}
 @media(max-width:640px){.build-live-toolbar{top:9px;padding:7px 9px;gap:8px;font-size:8px}.build-live-status{left:12px;bottom:12px;width:min(250px,calc(100vw - 24px));padding:10px 12px}.build-live-cursor span{font-size:7px}}
 @media(prefers-reduced-motion:reduce){.build-sequence.build-live{display:none}body.portfolio-building .build-pending{opacity:1!important;visibility:visible!important}body.portfolio-building .build-revealed{animation:none}}
+
+/* The live sequence owns all reveal timing; disable the former independent CSS clocks */
+body.portfolio-building main>.header,body.portfolio-building main>.hero,body.portfolio-building main>.split,body.portfolio-building main>.projects,body.portfolio-building main>footer,
+body.portfolio-building main .hero h1,body.portfolio-building main .hero .lead,body.portfolio-building main .split h2,body.portfolio-building main .project h3,
+body.portfolio-building main .tool-card,body.portfolio-building main .skill,body.portfolio-building main .project{animation:none!important;clip-path:none!important;filter:none}
