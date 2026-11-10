@@ -91,50 +91,49 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'The latest message must be from the visitor.' });
   }
 
-  try {
-    const payload = {
-      model: 'auto:fast',
-      messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...safeMessages],
-      max_tokens: 450,
-      temperature: 0.75
-    };
-    const providers = [
-      { name: 'LLMFaucet', url: 'https://api.llmfaucet.dev/v1/chat/completions', headers: { Authorization: 'Bearer free' } },
-      { name: 'Pollinations', url: 'https://text.pollinations.ai/openai', headers: {} }
-    ];
-    let lastStatus = 502;
-    for (const provider of providers) {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 22000);
-      try {
-        const upstream = await fetch(provider.url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', ...provider.headers },
-          body: JSON.stringify({ ...payload, model: provider.name === 'Pollinations' ? 'openai-fast' : payload.model }),
-          signal: controller.signal
-        });
-        const raw = await upstream.text();
-        let result;
-        try { result = JSON.parse(raw); } catch { result = {}; }
-        if (!upstream.ok) {
-          lastStatus = upstream.status;
-          console.warn('Katzy provider unavailable:', provider.name, upstream.status, result.error?.message || '');
-          continue;
-        }
-        const reply = result.choices?.[0]?.message?.content?.trim();
-        if (reply) return res.status(200).json({ reply, provider: provider.name });
-        console.warn('Katzy provider returned an empty reply:', provider.name);
-      } catch (providerError) {
-        console.warn('Katzy provider connection failed:', provider.name, providerError.message);
-      } finally {
-        clearTimeout(timeout);
+  const payload = {
+    model: 'codestral-latest',
+    messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...safeMessages],
+    max_tokens: 450,
+    temperature: 0.7
+  };
+  const providers = [
+    { name: 'LLM7', url: 'https://api.llm7.io/v1/chat/completions', headers: {} },
+    { name: 'Pollinations', url: 'https://text.pollinations.ai/openai', headers: {}, model: 'openai-fast' }
+  ];
+  let lastStatus = 502;
+  for (const provider of providers) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 18000);
+    try {
+      const upstream = await fetch(provider.url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...provider.headers },
+        body: JSON.stringify({ ...payload, model: provider.model || payload.model }),
+        signal: controller.signal
+      });
+      const raw = await upstream.text();
+      let result = {};
+      try { result = JSON.parse(raw); } catch {}
+      if (!upstream.ok) {
+        lastStatus = upstream.status;
+        console.warn('Katzy provider unavailable:', provider.name, upstream.status, result.error?.message || raw.slice(0, 180));
+        continue;
       }
+      const reply = result.choices?.[0]?.message?.content?.trim();
+      if (reply) return res.status(200).json({ reply, provider: provider.name });
+      console.warn('Katzy provider returned no chat completion:', provider.name);
+    } catch (providerError) {
+      console.warn('Katzy provider connection failed:', provider.name, providerError.message);
+    } finally {
+      clearTimeout(timeout);
     }
-    return res.status(lastStatus === 429 ? 429 : 502).json({
-      error: lastStatus === 429
-        ? 'I’m getting a lot of visitors right now 😅 Please give me a moment and try again.'
-        : 'I can’t reach my AI services at the moment. Please try again shortly 💜'
-    });
+  }
+  return res.status(lastStatus === 429 ? 429 : 502).json({
+    error: lastStatus === 429
+      ? 'I’m a little busy right now 🤖 Please wait a moment and try again.'
+      : 'My AI connection is temporarily unavailable. Please try again shortly.'
+  });
   } catch (error) {
     console.error('Katzy request failed:', error.message);
     return res.status(502).json({ error: 'A connection issue stopped Katzy from replying. Please try again.' });
