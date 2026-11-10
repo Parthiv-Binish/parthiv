@@ -100,33 +100,26 @@ function BuildAnimation(){
    const elapsed=now-started;
    const maxScroll=Math.max(0,document.documentElement.scrollHeight-window.innerHeight);
    if(elapsed<descend){
-    const progress=elapsed/descend;
-    const eased=progress<.5?4*progress*progress*progress:1-Math.pow(-2*progress+2,3)/2;
-    window.scrollTo(0,maxScroll*eased);
-    frame=requestAnimationFrame(animateScroll);
+    const p=elapsed/descend,e=p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;
+    window.scrollTo(0,maxScroll*e);frame=requestAnimationFrame(animateScroll);
    }else if(elapsed<total){
-    const progress=(elapsed-descend)/returnDuration;
-    const eased=1-Math.pow(1-progress,3);
-    window.scrollTo(0,maxScroll*(1-eased));
-    frame=requestAnimationFrame(animateScroll);
-   }else{
-    window.scrollTo(0,0);
-   }
+    const p=(elapsed-descend)/returnDuration;
+    window.scrollTo(0,maxScroll*(1-Math.pow(1-p,3)));frame=requestAnimationFrame(animateScroll);
+   }else window.scrollTo(0,0);
   };
   frame=requestAnimationFrame(animateScroll);
-  const timer=setTimeout(()=>{
-   window.scrollTo({top:0,behavior:'instant'});
-   setVisible(false);
-   document.body.classList.remove('portfolio-building');
-   try{sessionStorage.setItem('portfolio_build_seen','1')}catch{}
-  },total+250);
+  const timer=setTimeout(()=>{window.scrollTo({top:0,behavior:'instant'});setVisible(false);document.body.classList.remove('portfolio-building');try{sessionStorage.setItem('portfolio_build_seen','1')}catch{}},total+700);
   return()=>{clearTimeout(timer);cancelAnimationFrame(frame);document.body.classList.remove('portfolio-building')};
  },[visible]);
  if(!visible)return null;
  return <div className="build-sequence" aria-hidden="true">
   <div className="build-blueprint"/>
-  <div className="build-toolbar"><span className="build-tool-active">SELECT</span><span>TYPE</span><span>SHAPE</span><span>IMAGE</span><span>COLOUR</span></div>
-  <div className="build-cursor"><svg viewBox="0 0 28 34"><path d="M3 2L3 25L9.5 19L14 30L18 28L13.5 17L22 17Z" fill="#f5f8fc" stroke="#101722" strokeWidth="1.8" strokeLinejoin="round"/></svg><span>designer.cursor</span></div>
+  <div className="build-editor-window"><div className="editor-top"><i/><i/><i/><span>PARTHIV.BINISH — DESIGN CANVAS</span></div><div className="editor-ruler">LAYERS　 FRAME 01　 AUTO LAYOUT　 ALIGN　 DISTRIBUTE</div></div>
+  <div className="build-toolbar"><span className="tool-select">↖ SELECT</span><span className="tool-type">T TYPE</span><span className="tool-shape">▱ SHAPE</span><span className="tool-image">▧ IMAGE</span><span className="tool-colour">◉ COLOUR</span></div>
+  <div className="build-cursor"><svg viewBox="0 0 28 34"><path d="M3 2L3 25L9.5 19L14 30L18 28L13.5 17L22 17Z" fill="#f5f8fc" stroke="#101722" strokeWidth="1.8" strokeLinejoin="round"/></svg><span>designer.cursor</span><b className="click-ripple"/></div>
+  <div className="build-action build-action-type"><small>TEXT TOOL · INSERT</small><strong>Infrastructure Support Engineer</strong><i/></div>
+  <div className="build-action build-action-shape"><small>FRAME TOOL · DRAW</small><i/></div>
+  <div className="build-action build-action-drag"><small>DRAGGING ASSET</small><img src="https://cdn.simpleicons.org/cisco/ffffff" alt=""/><span>→ DROP INTO TOOL CARD</span></div>
   <div className="build-inspector"><small>DESIGN / LIVE SESSION</small><strong className="build-phase">Creating layout</strong><div className="build-inspector-line"><i/> Frame · 1440 × auto</div><div className="build-palette"><i/><i/><i/><i/><i/></div><div className="build-inspector-line">Radius <b>12 px</b></div><div className="build-inspector-line">Spacing <b>24 px</b></div></div>
   <div className="build-image-tray"><span>ASSET LIBRARY</span><img src="https://cdn.simpleicons.org/thousandeyes/ffffff" alt=""/><img src="https://cdn.simpleicons.org/cisco/ffffff" alt=""/><img src="https://cdn.simpleicons.org/datadog/ffffff" alt=""/><img src="https://cdn.simpleicons.org/servicenow/ffffff" alt=""/></div>
   <div className="build-status"><span className="build-status-dot"/><span className="build-status-label">PARTHIV.BINISH / DESIGN CANVAS</span><strong>Building your portfolio</strong><div className="build-progress"><i/></div><div className="build-step-caption">01 Structure → 02 Typography → 03 Components → 04 Assets → 05 Finish</div></div>
