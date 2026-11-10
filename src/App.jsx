@@ -1,3 +1,4 @@
+import React from 'react';
 import { ArrowUpRight, ArrowDownRight, Github, Linkedin, Network, Code2, Database, Shield, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 
