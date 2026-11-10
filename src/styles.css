@@ -399,3 +399,23 @@ body.portfolio-building main .build-revealed.skill {
 .build-live-cursor {
   transition: left .42s cubic-bezier(.2,.7,.2,1), top .42s cubic-bezier(.2,.7,.2,1) !important;
 }
+
+
+/* Progressive, compact build: unreached elements keep layout space but stay hidden. */
+body.portfolio-building main .build-unmade { visibility:hidden!important; opacity:0!important; }
+body.portfolio-building main .build-type,
+body.portfolio-building main .build-draw,
+body.portfolio-building main .build-drop { animation-duration:.24s!important; }
+body.portfolio-building .build-live-cursor { transition:left .12s ease-out,top .12s ease-out; }
+@keyframes designer-type-in {
+  0% { clip-path:inset(0 100% 0 0); filter:blur(1px); }
+  100% { clip-path:inset(0 0 0 0); filter:none; }
+}
+@keyframes designer-draw-in {
+  0% { transform:scaleX(.78); filter:brightness(1.4); }
+  100% { transform:scaleX(1); filter:none; }
+}
+@keyframes designer-drop-in {
+  0% { transform:translate(-8px,-5px) scale(.96); filter:brightness(1.3); }
+  100% { transform:translate(0,0) scale(1); filter:none; }
+}
