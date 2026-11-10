@@ -155,7 +155,7 @@ body.portfolio-building main>footer.ps-section-ready{opacity:1!important}
 @keyframes ps-type-in{from{clip-path:inset(0 100% 0 0);opacity:.2}to{clip-path:inset(0);opacity:1}}
 @keyframes ps-shape-in{from{clip-path:inset(0 100% 0 0);transform:scaleX(.96);transform-origin:left;opacity:.25}to{clip-path:inset(0);transform:scaleX(1);opacity:1}}
 @keyframes ps-asset-in{0%{opacity:0;transform:translate(18px,-12px) scale(.82)}70%{opacity:1;transform:translate(-2px,2px) scale(1.04)}100%{opacity:1;transform:none}}
-.photoshop-mode{position:fixed;inset:0;z-index:9998;pointer-events:none;background:#101820;overflow:hidden;color:#dce6f2;font-family:ui-monospace,SFMono-Regular,monospace}
+.photoshop-mode{position:fixed;inset:0;z-index:9998;pointer-events:none;background:transparent;overflow:hidden;color:#dce6f2;font-family:ui-monospace,SFMono-Regular,monospace}
 .ps-topbar{position:absolute;inset:0 0 auto;height:38px;display:flex;align-items:center;gap:12px;padding:0 14px;background:#171c24;border-bottom:1px solid #53617466;font-size:10px}
 .ps-mark{display:grid;place-items:center;width:23px;height:23px;border-radius:4px;background:#173d68;color:#8fc7ff;font:bold 15px Georgia}
 .ps-doc-meta{color:#8293a9;font-size:9px}.ps-top-right{margin-left:auto;color:#8293a9;font-size:9px}
