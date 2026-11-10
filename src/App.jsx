@@ -89,41 +89,47 @@ function ConnectionAssistant(){
 }
 function BuildAnimation(){
  const [visible,setVisible]=useState(()=>{try{return !sessionStorage.getItem('portfolio_build_seen')}catch{return true}});
- const [phase,setPhase]=useState('Preparing workspace');
+ const [phase,setPhase]=useState('Opening design workspace');
  const [progress,setProgress]=useState(0);
- const [cursor,setCursor]=useState({x:24,y:80});
+ const [cursor,setCursor]=useState({x:90,y:160});
  const [clicking,setClicking]=useState(false);
+ const [tool,setTool]=useState('Move');
+ const [selection,setSelection]=useState(null);
+ const [swatch,setSwatch]=useState('#398cff');
  useEffect(()=>{
   if(!visible)return;
-  const clean=()=>document.querySelectorAll('.build-unmade,.build-type,.build-draw,.build-drop,.build-active').forEach(el=>el.classList.remove('build-unmade','build-type','build-draw','build-drop','build-active'));
+  let cancelled=false;
+  const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+  const clean=()=>{
+   document.querySelectorAll('.build-unmade,.build-making,.build-revealed,.build-active').forEach(el=>el.classList.remove('build-unmade','build-making','build-revealed','build-active'));
+   document.body.classList.remove('portfolio-building');
+  };
   const finish=()=>{
    clean();
-   document.body.classList.remove('portfolio-building');
    try{sessionStorage.setItem('portfolio_build_seen','1')}catch{}
    setVisible(false);
    window.dispatchEvent(new Event('portfolio-build-complete'));
   };
   if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){finish();return;}
-  let cancelled=false;
-  const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
   const groups=[
-   {selector:'.header .brand, .header .nav a',label:'Setting up the navigation',kind:'draw'},
-   {selector:'.hero .eyebrow, .hero h1, .hero .lead, .hero .actions',label:'Composing the introduction',kind:'type'},
-   {selector:'#about .index, #about h2, #about div > p',label:'Writing the profile',kind:'type'},
-   {selector:'#experience .index, #experience .role, #experience > div > p, #experience .date, #experience .experience-tools h4',label:'Building the experience section',kind:'draw'},
-   {selector:'#experience .tool-card',label:'Placing network tools',kind:'drop'},
-   {selector:'#projects .section-heading, #projects .project',label:'Creating project cards',kind:'drop'},
-   {selector:'#skills .index, #skills h2, #skills .skill',label:'Arranging the skill grid',kind:'drop'},
-   {selector:'.education .index, .education > div',label:'Adding education details',kind:'type'},
-   {selector:'footer > div, footer .bottom',label:'Finishing the contact area',kind:'draw'}
+   {selector:'.header .brand, .header .nav a',label:'Selecting and aligning the navigation',tool:'Move',kind:'draw'},
+   {selector:'.hero .eyebrow, .hero h1, .hero .lead, .hero .actions',label:'Setting type and spacing',tool:'Type',kind:'type'},
+   {selector:'#about .index, #about h2, #about div > p',label:'Composing the profile',tool:'Type',kind:'type'},
+   {selector:'#experience .index, #experience .role, #experience > div > p, #experience .date, #experience .experience-tools h4',label:'Drawing the experience layout',tool:'Rectangle',kind:'draw'},
+   {selector:'#experience .tool-card',label:'Placing and aligning tool assets',tool:'Move',kind:'drop'},
+   {selector:'#projects .section-heading, #projects .project',label:'Creating project frames',tool:'Rectangle',kind:'draw'},
+   {selector:'#skills .index, #skills h2, #skills .skill',label:'Applying colour and arranging skills',tool:'Eyedropper',kind:'drop'},
+   {selector:'.education .index, .education > div',label:'Adding final text layers',tool:'Type',kind:'type'},
+   {selector:'footer > div, footer .bottom',label:'Finishing the canvas',tool:'Brush',kind:'draw'}
   ];
   const targets=groups.flatMap(g=>Array.from(document.querySelectorAll(g.selector)));
   document.body.classList.add('portfolio-building');
   targets.forEach(el=>el.classList.add('build-unmade'));
   window.scrollTo({top:0,behavior:'instant'});
   const run=async()=>{
-   await wait(90);
+   await wait(180);
    let done=0,lastSection=null;
+   const toolPoint={Move:{x:25,y:150},Marquee:{x:25,y:185},Lasso:{x:25,y:220},Brush:{x:25,y:255},Type:{x:25,y:290},Eyedropper:{x:25,y:325},Rectangle:{x:25,y:360}};
    for(const group of groups){
     if(cancelled)return;
     const elements=Array.from(document.querySelectorAll(group.selector));
@@ -132,39 +138,58 @@ function BuildAnimation(){
     const section=elements[0].closest('section,header,footer')||elements[0];
     if(section!==lastSection){
      lastSection=section;
-     const top=Math.max(0,window.scrollY+section.getBoundingClientRect().top-82);
+     const top=Math.max(0,window.scrollY+section.getBoundingClientRect().top-95);
      window.scrollTo({top,behavior:'smooth'});
-     await wait(190);
+     await wait(330);
     }
+    const tp=toolPoint[group.tool]||toolPoint.Move;
+    setCursor(tp);setClicking(false);await wait(130);
+    setClicking(true);setTool(group.tool);await wait(100);setClicking(false);
     for(const el of elements){
      if(cancelled)return;
      const r=el.getBoundingClientRect();
-     setCursor({x:Math.max(12,Math.min(window.innerWidth-28,r.left+Math.min(r.width*.72,160))),y:Math.max(68,Math.min(window.innerHeight-42,r.top+Math.min(r.height*.5,54)))});
-     setClicking(true);
-     await wait(65);
-     el.classList.add(group.kind==='type'?'build-type':group.kind==='drop'?'build-drop':'build-draw','build-active');
+     const x=Math.max(8,Math.min(window.innerWidth-20,r.left));
+     const y=Math.max(70,Math.min(window.innerHeight-30,r.top));
+     const w=Math.max(22,Math.min(r.width,window.innerWidth-x-10));
+     const h=Math.max(18,Math.min(r.height,window.innerHeight-y-10));
+     setCursor({x:x+Math.min(w*.12,35),y:y+Math.min(h*.2,20)});
+     setSelection({x:x+Math.min(w*.12,35),y:y+Math.min(h*.2,20),w:Math.max(20,w*.72),h:Math.max(18,h*.65),kind:group.kind});
+     await wait(100);
+     setClicking(true);await wait(65);
+     el.classList.add('build-making','build-active');
      el.classList.remove('build-unmade');
-     await wait(105);
+     setCursor({x:x+w,y:y+h});
+     await wait(group.kind==='type'?220:190);
+     el.classList.remove('build-making','build-active');
+     el.classList.add('build-revealed');
      setClicking(false);
-     el.classList.remove('build-active');
      done++;
      setProgress(Math.round(done/targets.length*100));
+     await wait(65);
     }
    }
    if(cancelled)return;
-   setPhase('Design complete');
+   setPhase('Saving finished design');
+   setTool('Move');setSelection(null);
    window.scrollTo({top:0,behavior:'smooth'});
-   await wait(220);
+   await wait(300);
    if(!cancelled)finish();
   };
   run();
-  return()=>{cancelled=true;document.body.classList.remove('portfolio-building');clean()};
+  return()=>{cancelled=true;clean()};
  },[visible]);
  if(!visible)return null;
- return <div className="build-sequence build-live" aria-hidden="true">
-  <div className="build-live-toolbar"><span className="build-live-mark">PB</span><span>PORTFOLIO / LIVE DESIGN</span><span className="build-live-state"><i/> CREATING</span></div>
-  <div className={clicking?'build-live-cursor is-clicking':'build-live-cursor'} style={{left:cursor.x,top:cursor.y}}><svg viewBox="0 0 28 34"><path d="M3 2L3 25L9.5 19L14 30L18 28L13.5 17L22 17Z" fill="#f5f8fc" stroke="#101722" strokeWidth="1.8" strokeLinejoin="round"/></svg><span>designer.cursor</span></div>
-  <div className="build-live-status"><div className="build-live-status-top"><span>LIVE DESIGN</span><strong>{progress}%</strong></div><div className="build-live-progress"><i style={{width:progress+'%'}}/></div><p>{phase}</p></div>
+ const tools=[['Move','move'],['Marquee','square-dashed'],['Lasso','lasso'],['Brush','paintbrush'],['Type','type'],['Eyedropper','pipette'],['Rectangle','square']];
+ return <div className="build-sequence build-live photoshop-mode" aria-hidden="true">
+  <div className="ps-topbar"><span className="ps-mark">Ps</span><span>Parthiv_Portfolio.psd</span><span className="ps-top-right">RGB / 8 &nbsp; • &nbsp; 100%</span></div>
+  <div className="ps-toolbox">{tools.map(([name,icon])=><span key={name} className={tool===name?'ps-tool selected':'ps-tool'} title={name}><i>{icon==='move'?'↖':icon==='square-dashed'?'▧':icon==='lasso'?'⌁':icon==='paintbrush'?'╱':icon==='type'?'T':icon==='pipette'?'◉':'□'}</i></span>)}</div>
+  <div className="ps-options"><b>{tool} Tool</b><span>{tool==='Rectangle'?'Shape: Blue stroke':tool==='Eyedropper'?'Sample: All layers':tool==='Type'?'Font: Manrope / 600':'Auto-select: Layer'}</span><span className="ps-colours"><i style={{background:swatch}}/><i style={{background:'#e8edf5'}}/><i style={{background:'#182536'}}/></span></div>
+  <svg className="ps-selection" viewBox={`0 0 ${typeof window!=='undefined'?window.innerWidth:1200} ${typeof window!=='undefined'?window.innerHeight:800}`} preserveAspectRatio="none">
+   {selection&&<><rect x={selection.x} y={selection.y} width={selection.w} height={selection.h} fill={selection.kind==='draw'?'rgba(57,140,255,.035)':'none'} stroke="#eaf3ff" strokeWidth="1.5" strokeDasharray="5 4"/><rect x={selection.x} y={selection.y} width={selection.w} height={selection.h} fill="none" stroke="#287fe9" strokeWidth="1" strokeDasharray="5 4" className="ps-marching-ants"/></>}
+  </svg>
+  <div className={clicking?'build-live-cursor is-clicking':'build-live-cursor'} style={{left:cursor.x,top:cursor.y}}><svg viewBox="0 0 28 34"><path d="M3 2L3 25L9.5 19L14 30L18 28L13.5 17L22 17Z" fill="#f5f8fc" stroke="#101722" strokeWidth="1.8" strokeLinejoin="round"/></svg></div>
+  <div className="ps-colour-pop"><span>FOREGROUND COLOUR</span><div>{['#398cff','#f4f7fb','#54c7a3','#f0b65b','#182536'].map(c=><i key={c} style={{background:c}} onAnimationEnd={()=>setSwatch(c)}/>)}</div></div>
+  <div className="build-live-status"><div className="build-live-status-top"><span>{tool.toUpperCase()} TOOL</span><strong>{progress}%</strong></div><div className="build-live-progress"><i style={{width:progress+'%'}}/></div><p>{phase}</p></div>
  </div>;
 }
 function CookieConsent(){
