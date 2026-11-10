@@ -1,0 +1,28 @@
+import { ArrowUpRight, ArrowDownRight, Github, Linkedin, Network, Code2, Database, Shield, Menu, X } from 'lucide-react';
+import { useState } from 'react';
+
+const projects = [
+  {name:'VALO Community',kind:'Web application',description:'A community platform for discovering Kick and YouTube streamers.',stack:'React · FastAPI · Supabase',href:'https://github.com/Parthiv-Binish/valo-community'},
+  {name:'Face Detection',kind:'Computer vision',description:'A computer-vision project exploring face detection and recognition.',stack:'Python · OpenCV',href:'https://github.com/Parthiv-Binish/Face-Detection'},
+  {name:'Utharam Browser',kind:'Desktop application',description:'A desktop browser project built with Python.',stack:'Python',href:'https://github.com/Parthiv-Binish/Utharam-Browser-PyBrowser-'}
+];
+const skills=[
+ {icon:Network,title:'Network & IT Operations',items:'Network monitoring · Incident handling · Connectivity troubleshooting · Vendor coordination · Linux'},
+ {icon:Code2,title:'Development',items:'React · JavaScript · Python · PHP · FastAPI · HTML & CSS'},
+ {icon:Database,title:'Data & Platforms',items:'MySQL · MongoDB · Supabase · Git · Vercel'},
+ {icon:Shield,title:'Security',items:'Cybersecurity fundamentals · Cyber Security Analytics'}
+];
+function LinkOut({href,children,className=''}){return <a className={className} href={href} target="_blank" rel="noreferrer">{children}<ArrowUpRight size={15}/></a>}
+export default function App(){
+ const [open,setOpen]=useState(false);const close=()=>setOpen(false);
+ return <main>
+  <header className="header"><a className="brand" href="#home" onClick={close}><span className="mark">PB</span><span>Parthiv Binish</span></a><button className="menu-toggle" onClick={()=>setOpen(!open)} aria-label="Toggle navigation">{open?<X/>:<Menu/>}</button><nav className={open?'nav nav-open':'nav'}>{['About','Experience','Projects','Skills','Contact'].map(x=><a key={x} href={'#'+x.toLowerCase()} onClick={close}>{x}</a>)}<LinkOut href="https://github.com/Parthiv-Binish">GitHub</LinkOut></nav></header>
+  <section className="hero" id="home"><div className="hero-copy"><p className="eyebrow">IT OPERATIONS <i>/</i> NETWORK <i>/</i> DEVELOPMENT</p><h1>Building reliable systems<br/>and <em>practical solutions.</em></h1><p className="lead">I work across enterprise network operations and software development, bringing an operations mindset to the systems and applications I build.</p><div className="actions"><a className="primary" href="#projects">Explore projects <ArrowDownRight size={17}/></a><LinkOut href="https://github.com/Parthiv-Binish" className="quiet-link">GitHub</LinkOut></div></div><div className="hero-art" aria-hidden="true"><div className="arc arc-a"/><div className="arc arc-b"/><p>NETWORK OPERATIONS<br/>INFRASTRUCTURE<br/>SOFTWARE DEVELOPMENT</p></div></section>
+  <section className="split" id="about"><p className="index">01 / ABOUT</p><div><h2>Technology is most useful when it solves a real problem.</h2><p>I’m an IT professional currently working in Network Operations at Tata Consultancy Services on the TMNA project. My work involves incident handling, monitoring, troubleshooting coordination and working with sites and vendors toward service restoration.</p><p>Alongside operations, I build software projects that help me explore application development, backend systems and practical problem-solving.</p></div></section>
+  <section className="split" id="experience"><p className="index">02 / EXPERIENCE</p><div><div className="role"><span className="tcs">tcs</span><div><h3>Tata Consultancy Services</h3><p>Network Operations · TMNA Project</p></div></div><p>Enterprise network operations, incident handling, monitoring and coordination with sites and vendors to support troubleshooting and service restoration.</p><small className="date">AUG 2025 — PRESENT</small></div></section>
+  <section className="projects" id="projects"><div className="section-heading"><p className="index">03 / SELECTED PROJECTS</p><span>Selected work</span></div>{projects.map((p,i)=><article className="project" key={p.name}><span className="number">0{i+1}</span><div><small>{p.kind}</small><h3>{p.name}</h3><p>{p.description}</p><label>{p.stack}</label></div><LinkOut href={p.href} className="repo-link">Repository</LinkOut></article>)}<p className="note">Project descriptions are brief; implementation details can be reviewed in each repository.</p></section>
+  <section className="split" id="skills"><p className="index">04 / CAPABILITIES</p><div><h2>Tools and areas I work with.</h2><div className="skill-grid">{skills.map(({icon:Icon,title,items})=><div className="skill" key={title}><div><Icon size={19}/><h3>{title}</h3></div><p>{items}</p></div>)}</div></div></section>
+  <section className="split education"><p className="index">05 / EDUCATION</p><div><h3>Bachelor of Computer Applications</h3><p>Mahatma Gandhi University · 2022–2025</p><p>St. Joseph’s Academy of Higher Education & Research</p><p>Certification: Cyber Security Analytics (CCSA)</p></div></section>
+  <footer id="contact"><div><p className="eyebrow">HAVE A ROLE OR PROJECT IN MIND?</p><h2>Let’s connect.</h2><p>For professional opportunities and collaboration, find me on GitHub or LinkedIn.</p></div><div className="social"><LinkOut href="https://github.com/Parthiv-Binish"><Github size={17}/> GitHub</LinkOut><LinkOut href="https://www.linkedin.com/in/parthiv-binish/"><Linkedin size={17}/> LinkedIn</LinkOut></div><div className="bottom"><span>Parthiv Binish</span><span>Network Operations · Software Development</span><a href="#home">Back to top ↑</a></div></footer>
+ </main>
+}
