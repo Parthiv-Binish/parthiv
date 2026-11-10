@@ -97,3 +97,19 @@
 .katzy-chat .faq-question:hover{transform:translateX(2px)}
 .katzy-user-question{background:linear-gradient(135deg,#304a70,#293e62)}
 @media(prefers-reduced-motion:reduce){.typing-dots i{animation:none}.katzy-chat .faq-question{transition:none}}
+
+/* Katzy robot-girl visual refresh: graphite, silver and teal */
+.katzy-avatar{width:46px;height:46px;flex:0 0 46px;object-fit:cover;border-radius:14px;border:1px solid rgba(42,211,198,.6);background:#e8eef0;box-shadow:0 0 16px rgba(20,180,170,.16)}
+.katzy-bubble-photo{object-fit:cover;border-radius:50%;background:#e8eef0}
+.assistant-bubble{border:2px solid #20b8ad;background:#e8eef0;box-shadow:0 5px 24px rgba(0,0,0,.2)}
+.assistant-bubble:hover{box-shadow:0 0 22px rgba(32,184,173,.32)}
+.katzy-top{background:#17252d!important;border-bottom:1px solid rgba(77,210,198,.2)!important}
+.katzy-greeting{background:linear-gradient(145deg,#22333a,#1b2b32)!important;border:1px solid rgba(53,195,183,.18)!important}
+.katzy-speaker{color:#62d9ce!important}
+.katzy-composer input:focus{border-color:rgba(55,205,190,.8)!important}
+.katzy-composer button{background:#168f88!important}
+.typing-dots i{background:#53d1c6!important}
+.katzy-user-question{background:linear-gradient(135deg,#245d60,#214b53)!important}
+.katzy-chat .faq-question:hover{border-color:rgba(68,208,196,.5)!important}
+.katzy-error{color:#ffb7ad}
+.katzy-chat{border-color:rgba(65,193,183,.35)!important}
