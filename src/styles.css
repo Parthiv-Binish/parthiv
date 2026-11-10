@@ -113,3 +113,24 @@
 .katzy-chat .faq-question:hover{border-color:rgba(68,208,196,.5)!important}
 .katzy-error{color:#ffb7ad}
 .katzy-chat{border-color:rgba(65,193,183,.35)!important}
+
+
+/* Katzy visual system — aligned with the portfolio's graphite and electric-blue palette */
+.katzy-avatar{width:44px;height:44px;flex:0 0 44px;object-fit:contain;object-position:center;border-radius:12px;border:1px solid rgba(57,140,255,.48);background:#101722;box-shadow:0 0 14px rgba(57,140,255,.12)}
+.katzy-bubble-photo{object-fit:contain;object-position:center;background:#101722;border-radius:50%}
+.assistant-bubble{background:#101722!important;border:1.5px solid rgba(57,140,255,.75)!important;box-shadow:0 5px 22px rgba(0,0,0,.32)!important}
+.assistant-bubble:hover{box-shadow:0 0 22px rgba(57,140,255,.25)!important}
+.katzy-top{background:#101722!important;border-bottom:1px solid rgba(255,255,255,.12)!important}
+.katzy-chat{background:#0d131c!important;border:1px solid rgba(255,255,255,.15)!important;box-shadow:0 18px 55px rgba(0,0,0,.5)!important}
+.katzy-greeting{background:#141e2b!important;border:1px solid rgba(255,255,255,.1)!important}
+.katzy-speaker{color:#76adff!important}
+.katzy-chat .faq-question{background:#111b29!important;border-color:rgba(255,255,255,.12)!important;color:#dce5f0!important}
+.katzy-chat .faq-question:hover,.katzy-chat .faq-selected{background:#1b2d45!important;border-color:rgba(57,140,255,.55)!important}
+.katzy-composer input{background:#111b29!important;border-color:rgba(255,255,255,.14)!important;color:#f2f4f7!important}
+.katzy-composer input:focus{border-color:rgba(57,140,255,.8)!important}
+.katzy-composer button{background:#287fe9!important;color:#fff!important}
+.typing-dots i{background:#398cff!important}
+.katzy-user-question{background:#203b5b!important;color:#f2f6fc!important}
+.katzy-reply{background:#172332!important}
+.katzy-footer-note{color:#8e9aaa!important}
+.katzy-actions{border-color:rgba(255,255,255,.12)!important}
