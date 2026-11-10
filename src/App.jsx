@@ -89,13 +89,22 @@ function ConnectionAssistant(){
 }
 function BuildAnimation(){
  const [visible,setVisible]=useState(()=>{try{return !sessionStorage.getItem('portfolio_build_seen')}catch{return true}});
- useEffect(()=>{if(!visible)return;const timer=setTimeout(()=>{setVisible(false);try{sessionStorage.setItem('portfolio_build_seen','1')}catch{}},3900);return()=>clearTimeout(timer)},[visible]);
+ useEffect(()=>{
+  if(!visible)return;
+  document.body.classList.add('portfolio-building');
+  const timer=setTimeout(()=>{
+   setVisible(false);
+   document.body.classList.remove('portfolio-building');
+   try{sessionStorage.setItem('portfolio_build_seen','1')}catch{}
+  },6800);
+  return()=>{clearTimeout(timer);document.body.classList.remove('portfolio-building')};
+ },[visible]);
  if(!visible)return null;
  return <div className="build-sequence" aria-hidden="true">
-  <div className="build-grid"></div>
-  <div className="build-status"><span className="build-status-dot"></span><span className="build-status-label">PARTHIV.BINISH / INTERFACE ASSEMBLY</span><strong>Building the experience<span className="build-ellipsis">...</span></strong><div className="build-steps"><span>01&nbsp; Layout</span><span>02&nbsp; Components</span><span>03&nbsp; Styling</span><span>04&nbsp; Complete</span></div><div className="build-progress"><i/></div></div>
-  <div className="build-cursor"><svg viewBox="0 0 28 34" aria-hidden="true"><path d="M3 2L3 25L9.5 19L14 30L18 28L13.5 17L22 17Z" fill="#f5f8fc" stroke="#101722" strokeWidth="1.8" strokeLinejoin="round"/></svg><span>design.cursor</span></div>
-  <div className="build-selection build-selection-one"></div><div className="build-selection build-selection-two"></div><div className="build-selection build-selection-three"></div>
+  <div className="build-blueprint"></div>
+  <div className="build-cursor"><svg viewBox="0 0 28 34"><path d="M3 2L3 25L9.5 19L14 30L18 28L13.5 17L22 17Z" fill="#f5f8fc" stroke="#101722" strokeWidth="1.8" strokeLinejoin="round"/></svg><span>design.cursor</span></div>
+  <div className="build-status"><span className="build-status-dot"></span><span className="build-status-label">PARTHIV.BINISH / LIVE ASSEMBLY</span><strong className="build-phase">Constructing the interface</strong><div className="build-steps"><span>01&nbsp; Structure</span><span>02&nbsp; Content</span><span>03&nbsp; Styling</span><span>04&nbsp; Finish</span></div><div className="build-progress"><i/></div></div>
+  <div className="build-guide build-guide-header"></div><div className="build-guide build-guide-hero"></div><div className="build-guide build-guide-section"></div>
  </div>;
 }
 function CookieConsent(){
