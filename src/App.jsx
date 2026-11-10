@@ -92,12 +92,35 @@ function BuildAnimation(){
  useEffect(()=>{
   if(!visible)return;
   document.body.classList.add('portfolio-building');
+  window.scrollTo(0,0);
+  let frame=0;
+  const started=performance.now();
+  const descend=9500,returnDuration=1200,total=descend+returnDuration;
+  const animateScroll=(now)=>{
+   const elapsed=now-started;
+   const maxScroll=Math.max(0,document.documentElement.scrollHeight-window.innerHeight);
+   if(elapsed<descend){
+    const progress=elapsed/descend;
+    const eased=progress<.5?4*progress*progress*progress:1-Math.pow(-2*progress+2,3)/2;
+    window.scrollTo(0,maxScroll*eased);
+    frame=requestAnimationFrame(animateScroll);
+   }else if(elapsed<total){
+    const progress=(elapsed-descend)/returnDuration;
+    const eased=1-Math.pow(1-progress,3);
+    window.scrollTo(0,maxScroll*(1-eased));
+    frame=requestAnimationFrame(animateScroll);
+   }else{
+    window.scrollTo(0,0);
+   }
+  };
+  frame=requestAnimationFrame(animateScroll);
   const timer=setTimeout(()=>{
+   window.scrollTo({top:0,behavior:'instant'});
    setVisible(false);
    document.body.classList.remove('portfolio-building');
    try{sessionStorage.setItem('portfolio_build_seen','1')}catch{}
-  },10500);
-  return()=>{clearTimeout(timer);document.body.classList.remove('portfolio-building')};
+  },total+250);
+  return()=>{clearTimeout(timer);cancelAnimationFrame(frame);document.body.classList.remove('portfolio-building')};
  },[visible]);
  if(!visible)return null;
  return <div className="build-sequence" aria-hidden="true">
