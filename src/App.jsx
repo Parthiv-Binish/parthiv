@@ -96,15 +96,18 @@ function BuildAnimation(){
    setVisible(false);
    document.body.classList.remove('portfolio-building');
    try{sessionStorage.setItem('portfolio_build_seen','1')}catch{}
-  },6800);
+  },10500);
   return()=>{clearTimeout(timer);document.body.classList.remove('portfolio-building')};
  },[visible]);
  if(!visible)return null;
  return <div className="build-sequence" aria-hidden="true">
-  <div className="build-blueprint"></div>
-  <div className="build-cursor"><svg viewBox="0 0 28 34"><path d="M3 2L3 25L9.5 19L14 30L18 28L13.5 17L22 17Z" fill="#f5f8fc" stroke="#101722" strokeWidth="1.8" strokeLinejoin="round"/></svg><span>design.cursor</span></div>
-  <div className="build-status"><span className="build-status-dot"></span><span className="build-status-label">PARTHIV.BINISH / LIVE ASSEMBLY</span><strong className="build-phase">Constructing the interface</strong><div className="build-steps"><span>01&nbsp; Structure</span><span>02&nbsp; Content</span><span>03&nbsp; Styling</span><span>04&nbsp; Finish</span></div><div className="build-progress"><i/></div></div>
-  <div className="build-guide build-guide-header"></div><div className="build-guide build-guide-hero"></div><div className="build-guide build-guide-section"></div>
+  <div className="build-blueprint"/>
+  <div className="build-toolbar"><span className="build-tool-active">SELECT</span><span>TYPE</span><span>SHAPE</span><span>IMAGE</span><span>COLOUR</span></div>
+  <div className="build-cursor"><svg viewBox="0 0 28 34"><path d="M3 2L3 25L9.5 19L14 30L18 28L13.5 17L22 17Z" fill="#f5f8fc" stroke="#101722" strokeWidth="1.8" strokeLinejoin="round"/></svg><span>designer.cursor</span></div>
+  <div className="build-inspector"><small>DESIGN / LIVE SESSION</small><strong className="build-phase">Creating layout</strong><div className="build-inspector-line"><i/> Frame · 1440 × auto</div><div className="build-palette"><i/><i/><i/><i/><i/></div><div className="build-inspector-line">Radius <b>12 px</b></div><div className="build-inspector-line">Spacing <b>24 px</b></div></div>
+  <div className="build-image-tray"><span>ASSET LIBRARY</span><img src="https://cdn.simpleicons.org/thousandeyes/ffffff" alt=""/><img src="https://cdn.simpleicons.org/cisco/ffffff" alt=""/><img src="https://cdn.simpleicons.org/datadog/ffffff" alt=""/><img src="https://cdn.simpleicons.org/servicenow/ffffff" alt=""/></div>
+  <div className="build-status"><span className="build-status-dot"/><span className="build-status-label">PARTHIV.BINISH / DESIGN CANVAS</span><strong>Building your portfolio</strong><div className="build-progress"><i/></div><div className="build-step-caption">01 Structure → 02 Typography → 03 Components → 04 Assets → 05 Finish</div></div>
+  <div className="build-selection build-selection-a"/><div className="build-selection build-selection-b"/>
  </div>;
 }
 function CookieConsent(){
