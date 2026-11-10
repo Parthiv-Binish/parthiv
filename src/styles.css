@@ -14,3 +14,34 @@
 /* Cookie preference notice */
 .cookie-consent{position:fixed;z-index:90;left:24px;bottom:24px;width:min(480px,calc(100vw - 112px));padding:18px 20px;background:#101722;border:1px solid rgba(255,255,255,.16);border-radius:9px;box-shadow:0 18px 55px rgba(0,0,0,.42);display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center}.cookie-eyebrow{font-size:9px;letter-spacing:.16em;color:#8fa0b5}.cookie-copy h3{font:500 16px Manrope;margin:7px 0}.cookie-copy p{font-size:11px;line-height:1.65;color:#aab5c4;margin:0}.cookie-copy a{color:#82baff;text-decoration:underline;text-underline-offset:2px}.cookie-detail{margin-top:9px!important}.cookie-actions{display:flex;flex-direction:column;gap:7px;min-width:118px}.cookie-actions button{font:inherit;font-size:10px;padding:9px 10px;border-radius:4px;cursor:pointer}.cookie-accept{background:#287fe9;border:1px solid #287fe9;color:white}.cookie-essential{background:transparent;border:1px solid rgba(255,255,255,.2);color:#e1e8f1}.cookie-customize{background:none;border:0;color:#9ba8b8;text-decoration:underline;text-underline-offset:3px}.cookie-actions button:hover{filter:brightness(1.15)}
 @media(max-width:640px){.assistant-widget{right:16px;bottom:16px}.assistant-widget .connect-assistant{right:0;bottom:68px;width:min(350px,calc(100vw - 32px));max-height:68vh}.cookie-consent{left:12px;bottom:12px;width:calc(100vw - 24px);grid-template-columns:1fr;gap:12px;padding:15px}.cookie-actions{display:grid;grid-template-columns:1fr 1fr;min-width:0}.cookie-customize{grid-column:1/-1}.assistant-bubble{width:54px;height:54px}}
+
+/* Katzy chat assistant */
+.tool-mark.vendor-logo img{width:auto;height:30px;max-width:118px;object-fit:contain;object-position:left center;filter:none;opacity:1}
+.tool-card{justify-content:flex-start}
+.assistant-bubble{background:#172334;border-color:rgba(112,169,239,.5)}
+.katzy-bubble-icon{width:25px;height:21px;border:1.8px solid #dceaff;border-radius:8px;display:flex;align-items:center;justify-content:center;gap:5px;position:relative}
+.katzy-bubble-icon:after{content:"";position:absolute;bottom:-5px;left:5px;width:7px;height:7px;border-left:1.8px solid #dceaff;transform:skewY(-35deg);background:#172334}
+.katzy-eye{width:3px;height:3px;border-radius:50%;background:#8fc2ff;z-index:1}
+.katzy-chat{padding:0 14px 14px;background:#0e1723;border-color:rgba(130,174,226,.25);border-radius:13px;box-shadow:0 22px 70px rgba(0,0,0,.55)}
+.katzy-top{height:62px;gap:11px}
+.katzy-avatar{width:34px;height:34px;flex:0 0 34px;border-radius:11px;background:#1d3552;border:1px solid rgba(143,194,255,.4);display:grid;place-items:center}
+.katzy-avatar span{width:14px;height:11px;border:1.5px solid #cfe4ff;border-radius:5px;position:relative}
+.katzy-avatar span:before,.katzy-avatar span:after{content:"";position:absolute;top:3px;width:2px;height:2px;border-radius:50%;background:#8fc2ff}
+.katzy-avatar span:before{left:3px}.katzy-avatar span:after{right:3px}
+.katzy-identity{display:flex;flex-direction:column;gap:4px;letter-spacing:0}
+.katzy-identity strong{font-size:13px;color:#f1f6ff;font-weight:600}
+.katzy-identity small{font-size:9px;color:#9eafc3;letter-spacing:0}
+.katzy-identity small i{display:inline-block;width:6px;height:6px;border-radius:50%;background:#65d6a3;margin-right:5px}
+.katzy-chat-body{max-height:min(56vh,490px);overflow:auto;padding:13px 2px 3px}
+.katzy-greeting,.katzy-reply{background:#172536;border:1px solid rgba(255,255,255,.07);border-radius:3px 11px 11px 11px;padding:12px 13px;margin:0 12px 16px 0}
+.katzy-greeting p,.katzy-reply p{font-size:11px;line-height:1.7;color:#d0dbea;margin:5px 0}
+.katzy-speaker{font-size:9px;font-weight:700;color:#91c3ff;letter-spacing:.04em}
+.katzy-time{display:block;text-align:right;font-size:8px;color:#8292a6;margin-top:7px}
+.katzy-prompt-label{font-size:8px;letter-spacing:.15em;color:#8295ad;margin:13px 0 8px}
+.katzy-chat .assistant-faq{gap:6px}
+.katzy-chat .faq-question{background:#111e2d;border-color:rgba(255,255,255,.09);border-radius:7px;padding:10px 11px;font-size:10px}
+.katzy-chat .faq-question:hover,.katzy-chat .faq-selected{background:#1b3552;border-color:rgba(111,174,247,.5)}
+.katzy-reply{margin:12px 0 2px 16px;background:#1c2d42;border-radius:11px 3px 11px 11px}
+.katzy-actions{border-top:1px solid rgba(255,255,255,.09);padding-top:12px}
+.katzy-actions a{border-radius:7px}
+@media(max-width:640px){.assistant-widget .connect-assistant{max-height:72vh}.katzy-chat-body{max-height:48vh}.tool-mark.vendor-logo img{max-width:105px;height:27px}}
