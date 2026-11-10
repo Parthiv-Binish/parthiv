@@ -105,7 +105,8 @@ function BuildAnimation(){
   const reveal=(selector,kind='type')=>{
    document.querySelectorAll(selector).forEach(el=>{
     el.classList.remove('ps-unbuilt');
-    el.classList.add('ps-built',kind==='asset'?'ps-asset-built':kind==='shape'?'ps-shape-built':'ps-type-built');\n    const section=el.closest('section,footer');if(section)section.classList.add('ps-section-ready');
+    el.classList.add('ps-built',kind==='asset'?'ps-asset-built':kind==='shape'?'ps-shape-built':'ps-type-built');
+    const section=el.closest('section,footer');if(section)section.classList.add('ps-section-ready');
    });
   };
   const addLayer=name=>{setLayers(current=>current.includes(name)?current:[...current,name]);setActiveLayer(name)};
